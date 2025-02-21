@@ -67,7 +67,7 @@ async function parseSwap() {
   });
 
   const trades2 = await parser.parseTrades(tx);
-  console.log("trades2:", trades);
+  console.log("trades2:", trades2);
 }
 
 ```
