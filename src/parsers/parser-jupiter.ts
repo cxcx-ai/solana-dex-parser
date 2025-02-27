@@ -236,7 +236,7 @@ export class JupiterParser {
     // Determine signer based on DCA program presence
     const signerIndex = this.containsDCAProgram() ? 2 : 0;
     const signer = this.txWithMeta.transaction.message.accountKeys[signerIndex].pubkey.toBase58();
-    const tradeType = Object.values(TOKENS).includes(inMint) ? 'SELL' : 'BUY';
+    const tradeType = Object.values(TOKENS).includes(inMint) ? 'BUY' : 'SELL';
     return {
       type: tradeType,
       inputToken: {

@@ -135,7 +135,7 @@ export const processSwapData = (
   }
 
   const { inputToken, outputToken } = calculateTokenAmounts(transfers, uniqueTokens);
-  const tradeType = Object.values(TOKENS).includes(inputToken.mint) ? 'SELL' : 'BUY';
+  const tradeType = Object.values(TOKENS).includes(inputToken.mint) ? 'BUY' : 'SELL';
 
   let signer = txWithMeta.transaction.message.accountKeys[0].pubkey.toBase58();
 

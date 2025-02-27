@@ -45,14 +45,14 @@ export class PumpfunParser {
     return {
       type: tradeType,
       inputToken: {
-        mint: isBuy ? event.mint : TOKENS.SOL,
-        amount: isBuy ? event.tokenAmount : event.solAmount,
-        decimals: isBuy ? 6 : 9,
-      },
-      outputToken: {
         mint: isBuy ? TOKENS.SOL : event.mint,
         amount: isBuy ? event.solAmount : event.tokenAmount,
         decimals: isBuy ? 9 : 6,
+      },
+      outputToken: {
+        mint: isBuy ? event.mint : TOKENS.SOL,
+        amount: isBuy ? event.tokenAmount : event.solAmount,
+        decimals: isBuy ? 6 : 9,
       },
       user: event.user,
       programId: DEX_PROGRAMS.PUMP_FUN.id,
