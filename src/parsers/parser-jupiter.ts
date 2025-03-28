@@ -215,13 +215,16 @@ export class JupiterParser {
       const inputMint = event.inputMint.toBase58();
       const outputMint = event.outputMint.toBase58();
 
+      const inputAmount = BigInt(event.inputAmount.toString());
+      const outputAmount = BigInt(event.outputAmount.toString());
+
       intermediateInfo.tokenIn.set(
         inputMint,
-        (intermediateInfo.tokenIn.get(inputMint) || BigInt(0)) + event.inputAmount
+        (intermediateInfo.tokenIn.get(inputMint) || BigInt(0)) + inputAmount
       );
       intermediateInfo.tokenOut.set(
         outputMint,
-        (intermediateInfo.tokenOut.get(outputMint) || BigInt(0)) + event.outputAmount
+        (intermediateInfo.tokenOut.get(outputMint) || BigInt(0)) + outputAmount
       );
 
       intermediateInfo.decimals.set(inputMint, event.inputMintDecimals);
