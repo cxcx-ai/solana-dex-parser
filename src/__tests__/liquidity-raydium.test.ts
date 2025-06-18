@@ -147,7 +147,7 @@ describe('Liquidity', () => {
           if (!tx) throw new Error('Transaction not found');
           const parser = new DexParser();
           const events = parser.parseLiquidity(tx);
-          console.log(events);
+          console.log('events > ', events);
           expect(events.length).toEqual(1);
           expect(events[0].type).toEqual(test.type);
           expect(events[0].poolId).toEqual(test.poolId);

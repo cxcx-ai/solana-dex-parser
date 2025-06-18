@@ -35,7 +35,14 @@ export interface ParseConfig {
    * If true, will throw an error if parsing fails
    * @default false
    */
-  thorwError?: boolean;
+  throwError?: boolean;
+
+  /**
+   * If true, will return the finalSwap record instead of the detail route trades
+   * Only works for Jupiter
+   * @default true
+   */
+  aggregateTrades?: boolean;
 }
 
 /**

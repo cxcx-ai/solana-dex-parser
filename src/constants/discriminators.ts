@@ -60,7 +60,7 @@ export const DISCRIMINATORS = {
   RAYDIUM: {
     CREATE: new Uint8Array([1]),
     ADD_LIQUIDITY: new Uint8Array([3]),
-    REMOVE_LIQUIDITY: new Uint8Array([4]),
+    REMOVE_LIQUIDITY: new Uint8Array([4]), // 4, 226, 190, 68, 43,   0,   0,  0
   },
   RAYDIUM_CL: {
     CREATE: {

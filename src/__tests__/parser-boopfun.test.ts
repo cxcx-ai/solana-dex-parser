@@ -34,7 +34,7 @@ describe('Parser', () => {
       // parse Boopfun trades (buy, sell)
       const dexParser = new DexParser();
       const result = dexParser.parseAll(tx);
-      console.log('result', JSON.stringify(result, null, 2));
+      // console.log('result', JSON.stringify(result, null, 2));
 
       // parse Boopfun events (create, buy, sell, complete)
       const adapter = new TransactionAdapter(tx);

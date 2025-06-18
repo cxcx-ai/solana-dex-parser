@@ -164,7 +164,6 @@ export class TransactionAdapter {
    */
   getInstruction(instruction: any) {
     const isParsed = !this.isCompiledInstruction(instruction);
-
     return {
       programId: isParsed ? getPubkeyString(instruction.programId) : this.accountKeys[instruction.programIdIndex],
       accounts: this.getInstructionAccounts(instruction),
@@ -195,6 +194,7 @@ export class TransactionAdapter {
 
   getInstructionAccounts(instruction: any): string[] {
     const accounts = instruction.accounts || instruction.accountKeyIndexes;
+    if (!accounts) return [];
     if (typeof accounts == 'string') {
       return this.getAccountKeys(Array.from(base58.decode(accounts)));
     }

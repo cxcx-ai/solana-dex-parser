@@ -29,20 +29,20 @@ describe('Parser', () => {
       const parser = new RaydiumLaunchpadEventParser(new TransactionAdapter(tx));
       const events = parser.processEvents();
       
-      const data = events[1].data as RaydiumLCPCreateEvent;
-      const buy = events[0].data as RaydiumLCPTradeEvent;
+      const create = events[0].data as RaydiumLCPCreateEvent;
+      const buy = events[1].data as RaydiumLCPTradeEvent;
       console.log('create events', events);
       // create
-      expect(data.poolState).toEqual("CPTNvVYT7qCzX3HnRRtSRAFpMipVgSP3eynXrW9p9YgD");
-      expect(data.creator).toEqual("J88snVaNTCW7T6saPvAmYDmjnhPiSpkw8uJ8FFCyfcGA");
-      expect(data.config).toEqual("6s1xP3hpbAfFoNtUNF8mfHsjr2Bd97JxFJRWLbL6aHuX");
-      expect(data.baseMintParam.symbol).toEqual("TOAST");
-      expect(data.curveParam.variant).toEqual("Constant");
-      expect(data.curveParam.data.supply.toString()).toEqual("1000000000000000");
-      expect((data.curveParam.data as ConstantCurve).totalBaseSell.toString()).toEqual("793100000000000");
-      expect(data.vestingParam.totalLockedAmount.toString()).toEqual("0");
-      expect(data.vestingParam.cliffPeriod.toString()).toEqual("0");
-      expect(data.vestingParam.unlockPeriod.toString()).toEqual("0");
+      expect(create.poolState).toEqual("CPTNvVYT7qCzX3HnRRtSRAFpMipVgSP3eynXrW9p9YgD");
+      expect(create.creator).toEqual("J88snVaNTCW7T6saPvAmYDmjnhPiSpkw8uJ8FFCyfcGA");
+      expect(create.config).toEqual("6s1xP3hpbAfFoNtUNF8mfHsjr2Bd97JxFJRWLbL6aHuX");
+      expect(create.baseMintParam.symbol).toEqual("TOAST");
+      expect(create.curveParam.variant).toEqual("Constant");
+      expect(create.curveParam.data.supply.toString()).toEqual("1000000000000000");
+      expect((create.curveParam.data as ConstantCurve).totalBaseSell.toString()).toEqual("793100000000000");
+      expect(create.vestingParam.totalLockedAmount.toString()).toEqual("0");
+      expect(create.vestingParam.cliffPeriod.toString()).toEqual("0");
+      expect(create.vestingParam.unlockPeriod.toString()).toEqual("0");
       // buy
       expect(buy.poolState).toEqual("CPTNvVYT7qCzX3HnRRtSRAFpMipVgSP3eynXrW9p9YgD");
       expect(buy.amountIn.toString()).toEqual("10000000");

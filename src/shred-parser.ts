@@ -62,7 +62,7 @@ export class ShredParser {
         }
       }
     } catch (error) {
-      if (config.thorwError) {
+      if (config.throwError) {
         throw error;
       }
       const msg = `Parse error: ${tx?.transaction?.signatures?.[0]} ${error}`;

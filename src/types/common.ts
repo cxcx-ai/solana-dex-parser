@@ -1,3 +1,5 @@
+import { TransactionAdapter } from '../transaction-adapter';
+import { TransactionUtils } from '../transaction-utils';
 import { PoolEvent } from './pool';
 import { TokenAmount, TradeInfo, TransferData } from './trade';
 
@@ -24,6 +26,10 @@ export interface ParseResult {
   tokenBalanceChange?: Map<string, BalanceChange>; // token balance change, key is token mint address
   moreEvents: Record<string, any[]>; // other events, key is Amm name
   msg?: string;
+  context: {
+    utils: TransactionUtils;
+    adapter: TransactionAdapter;
+  };
 }
 
 export interface ParseShredResult {

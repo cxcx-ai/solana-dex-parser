@@ -1,4 +1,3 @@
-import { TOKENS } from '../../constants';
 import { convertToUiAmount, PoolEvent, PoolEventType, TransferData } from '../../types';
 import { getInstructionData } from '../../utils';
 import { BaseLiquidityParser } from '../base-liquidity-parser';
@@ -49,9 +48,7 @@ export abstract class RaydiumLiquidityParserBase extends BaseLiquidityParser {
       const accounts = this.adapter.getInstructionAccounts(instruction);
       const type = typeof instructionType === 'string' ? instructionType : instructionType.type;
       const transfers = this.getTransfersForInstruction(programId, outerIndex, innerIndex).filter(
-        (it) =>
-          !it.info.destination ||
-          (it.info.authority && accounts.includes(it.info.destination) && it.programId != TOKENS.NATIVE)
+        (it) => !it.info.destination || (it.info.authority && accounts.includes(it.info.destination))
       );
 
       const config = this.getEventConfig(type, instructionType);

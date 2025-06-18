@@ -39,7 +39,7 @@ import {
   TradeInfo,
   TransferData,
 } from './types';
-import { getProgramName } from './utils';
+import { getFinalSwap, getProgramName } from './utils';
 
 /**
  * Interface for DEX trade parsers
@@ -129,7 +129,7 @@ export class DexParser {
    */
   private parseWithClassifier(
     tx: SolanaTransaction,
-    config: ParseConfig = { tryUnknowDEX: true },
+    config: ParseConfig = { tryUnknowDEX: true, aggregateTrades: true },
     parseType: 'trades' | 'liquidity' | 'transfer' | 'all'
   ): ParseResult {
     const result: ParseResult = {
@@ -139,12 +139,18 @@ export class DexParser {
       liquidities: [],
       transfers: [],
       moreEvents: {},
+      context: {} as any,
     };
 
     try {
       const adapter = new TransactionAdapter(tx, config);
       const utils = new TransactionUtils(adapter);
       const classifier = new InstructionClassifier(adapter);
+
+      result.context = {
+        utils,
+        adapter,
+      };
 
       // Get DEX information and validate
       const dexInfo = utils.getDexInfo(classifier);
@@ -188,7 +194,14 @@ export class DexParser {
               jupiterInstructions
             );
 
-            result.trades.push(...parser.processTrades());
+            const trades = parser.processTrades();
+            if (trades.length > 0) {
+              if (config.aggregateTrades == true) {
+                result.trades.push(utils.attachTradeFee(getFinalSwap(trades))!);
+              } else {
+                result.trades.push(...trades);
+              }
+            }
           }
         }
         if (result.trades.length > 0) {
@@ -198,12 +211,13 @@ export class DexParser {
 
       // Process instructions for each program
       for (const programId of allProgramIds) {
+        if (config?.programIds && !config.programIds.some((id) => id == programId)) continue;
+        if (config?.ignoreProgramIds && config.ignoreProgramIds.some((id) => id == programId)) continue;
+
         const classifiedInstructions = classifier.getInstructions(programId);
+
         // Process trades if needed
         if (parseType === 'trades' || parseType === 'all') {
-          if (config?.programIds && !config.programIds.some((id) => id == programId)) continue;
-          if (config?.ignoreProgramIds && config.ignoreProgramIds.some((id) => id == programId)) continue;
-
           const TradeParserClass = this.parserMap[programId];
           if (TradeParserClass) {
             const parser = new TradeParserClass(
@@ -230,9 +244,6 @@ export class DexParser {
 
         // Process liquidity if needed
         if (parseType === 'liquidity' || parseType === 'all') {
-          if (config?.programIds && !config.programIds.some((id) => id == programId)) continue;
-          if (config?.ignoreProgramIds && config.ignoreProgramIds.some((id) => id == programId)) continue;
-
           const LiquidityParserClass = this.parseLiquidityMap[programId];
           if (LiquidityParserClass) {
             const parser = new LiquidityParserClass(adapter, transferActions, classifiedInstructions);
@@ -265,7 +276,7 @@ export class DexParser {
       // Process more events if needed
       this.processMoreEvents(parseType, result, allProgramIds, adapter, transferActions, classifier);
     } catch (error) {
-      if (config.thorwError) {
+      if (config.throwError) {
         throw error;
       }
       const msg = `Parse error: ${tx?.transaction?.signatures?.[0]} ${error}`;

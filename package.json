@@ -1,6 +1,6 @@
 {
   "name": "solana-dex-parser",
-  "version": "2.5.5",
+  "version": "2.5.7",
   "description": "Solana Dex Transaction Parser",
   "author": "cxcx",
   "license": "MIT",
