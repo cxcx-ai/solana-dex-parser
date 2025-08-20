@@ -2,6 +2,14 @@
 
 A TypeScript library for parsing Solana DEX swap transactions. Supports multiple DEX protocols including Jupiter, Raydium, Meteora, PumpFun, BoopFun and Moonshot.
 
+## Future Development
+
+If you find this project useful, consider donating at 
+
+**SOL**: 879mxY5QKJH1J8x8suzB3rrV2YPVsoauaSJ7nT85YLU7
+
+to support future development. Thanks!
+
 ## Features
 
 - Parse **Swap** transactions from multiple DEX protocols
@@ -558,8 +566,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 This project is a TypeScript port of the original Go implementation [solanaswap-go](https://github.com/franco-bianco/solanaswap-go).
-
-## BUY ME A COFFEE
-If you find this project useful, please consider buying me a coffee. Your support is greatly appreciated!
-
-**SOL**: 879mxY5QKJH1J8x8suzB3rrV2YPVsoauaSJ7nT85YLU7
