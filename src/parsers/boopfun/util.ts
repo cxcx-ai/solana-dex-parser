@@ -15,6 +15,7 @@ export const getBoopfunTradeInfo = (
   const isBuy = tradeType === 'BUY';
   return {
     type: tradeType,
+    Pool: [event.bondingCurve],
     inputToken: {
       mint: isBuy ? TOKENS.SOL : event.mint,
       amount: isBuy ? convertToUiAmount(event.solAmount) : convertToUiAmount(event.tokenAmount, 6),

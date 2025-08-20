@@ -77,6 +77,11 @@ export const DEX_PROGRAMS = {
     name: 'RaydiumV4',
     tags: ['amm'],
   },
+  RAYDIUM_AMM: {
+    id: '5quBtoiQqxF9Jv6KYKctB59NT3gtJD2Y65kdnB1Uev3h',
+    name: 'RaydiumAMM',
+    tags: ['amm'],
+  },
   RAYDIUM_CPMM: {
     id: 'CPMMoo8L3F4NbTegBCKVNunggL7H1ZpdTHKxQB5qKP1C',
     name: 'RaydiumCPMM',
@@ -271,6 +276,11 @@ export const DEX_PROGRAMS = {
   BOOP_FUN: {
     id: 'boop8hVGQGqehUK2iVEMEnMrL5RbjywRzHKBmBE7ry4',
     name: 'Boopfun',
+    tags: ['amm'],
+  },
+  ZERO_FI: {
+    id: 'ZERor4xhbUycZ6gb9ntrhqscUcZmAbQDjEAtCf4hbZY',
+    name: 'ZeroFi',
     tags: ['amm'],
   },
 };

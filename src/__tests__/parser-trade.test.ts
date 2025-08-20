@@ -26,7 +26,7 @@ describe('Dex Parser', () => {
 
     [
 
-      "2YxPyAJNfnBLrVpBwMx7qMVNPSvBDhxiquwJGhBjwXhkP6i6AbooUg4b4wpi15bQq2Qs4t7BpL1UVvTMcXL8P4uS",
+      "2bG19j1twdgpKjbAUDVJNnGgqa9rz4kcuJJYg5Nyhb5jqGgd25SJBADtNMDrte4eFbeTENKiyBQb8Up6hn7EdoU3",
       // "3874qjiBkmSNk3rRMEst2fAfwSx9jPNNi3sCcFBxETzEYxpPeRnU9emKz26M2x3ttxJGJmjV4ctZziQMFmDgKBkZ", // multiple signers
       // "3Dd6Hr9AFFearu8MZ8V3Ukm2dAbWLQ3ZUbxTvfLBw1UtghqSc1mEsrgdcbqVYQrfozTy9wNYaHQoE5FqXqfTvHA", // pumpfun
       // "5pBu3T3iguqLpgtKTmhfiik13EruLVKNa28ZMtkrE2hhcM1hM1D7aNn7vgiqQsahFTaw6kiJiPre6suJAJdKrK2y", //pumpswap
@@ -36,24 +36,25 @@ describe('Dex Parser', () => {
     ]
       .forEach((signature) => {
         it(`${signature} `, async () => {
-          const tx = await connection.getParsedTransaction(signature, {
+          const tx = await connection.getTransaction(signature, {
 
             commitment: 'confirmed',
             maxSupportedTransactionVersion: 0,
           });
           if (!tx) { throw new Error(`Transaction not found > ${signature}`); }
-          const { context, fee, trades, liquidities, transfers, solBalanceChange, tokenBalanceChange, moreEvents } = parser.parseAll(tx,
+          const { fee, txStatus, aggregateTrade, trades, liquidities, transfers, solBalanceChange, tokenBalanceChange, moreEvents } = parser.parseAll(tx,
             {
-              aggregateTrades: false
+              tryUnknowDEX: true, // set true, you can get trades
+              aggregateTrades: true
             }
           );
-          // console.log('parseLiquidity> ', parser.parseLiquidity(tx));
           // fs.writeFileSync(`./src/__tests__/tx-${signature}-parsed.json`, JSON.stringify(tx, null, 2));
-          const swap = context.utils.attachTradeFee(getFinalSwap(trades));
+
           console.log('fee', fee);
           console.log('solBalanceChange', solBalanceChange, 'tokenBalanceChange', tokenBalanceChange);
+          console.log('txStatus', txStatus);
 
-          console.log('finalSwap', JSON.stringify(swap, null, 2));
+          console.log('finalSwap', JSON.stringify(aggregateTrade, null, 2));
           console.log('trades', JSON.stringify(trades, null, 2));
           console.log('liquidity', liquidities);
           console.log('transfer', JSON.stringify(transfers, null, 2));

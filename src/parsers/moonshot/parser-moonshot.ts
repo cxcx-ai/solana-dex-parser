@@ -48,6 +48,7 @@ export class MoonshotParser extends BaseParser {
 
       const trade: TradeInfo = {
         type: tradeType,
+        Pool: [accountKeys[2]],
         inputToken: {
           mint: tradeType === 'BUY' ? collateralMint : moonshotTokenMint,
           amount: tradeType === 'BUY' ? (collateralAmount.uiAmount ?? 0) : (tokenAmount.uiAmount ?? 0),

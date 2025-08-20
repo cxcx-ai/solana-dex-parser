@@ -65,6 +65,7 @@ export class JupiterLimitOrderV2Parser extends BaseParser {
     const tradeType: TradeType = getTradeType(inputMint, outputMint);
     const trade = {
       type: tradeType,
+       Pool: [],
       inputToken: {
         mint: inputMint,
         amount: convertToUiAmount(event.makingAmount, inputDecimal),

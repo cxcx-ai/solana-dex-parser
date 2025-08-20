@@ -84,12 +84,12 @@ export const getPubkeyString = (value: any): string => {
 export const sortByIdx = <T extends { idx: string }>(items: T[]): T[] => {
   return items && items.length > 1
     ? [...items].sort((a, b) => {
-        const [aMain, aSub = '0'] = a.idx.split('-');
-        const [bMain, bSub = '0'] = b.idx.split('-');
-        const mainDiff = parseInt(aMain) - parseInt(bMain);
-        if (mainDiff !== 0) return mainDiff;
-        return parseInt(aSub) - parseInt(bSub);
-      })
+      const [aMain, aSub = '0'] = a.idx.split('-');
+      const [bMain, bSub = '0'] = b.idx.split('-');
+      const mainDiff = parseInt(aMain) - parseInt(bMain);
+      if (mainDiff !== 0) return mainDiff;
+      return parseInt(aSub) - parseInt(bSub);
+    })
     : items;
 };
 
@@ -103,6 +103,7 @@ export const getFinalSwap = (trades: TradeInfo[], dexInfo?: DexInfo): TradeInfo 
 
     const inputTrade = trades[0];
     const outputTrade = trades[trades.length - 1];
+    const pools: string[] = [];
 
     if (trades.length >= 2) {
       // Merge trades
@@ -114,6 +115,9 @@ export const getFinalSwap = (trades: TradeInfo[], dexInfo?: DexInfo): TradeInfo 
         if (trade.outputToken.mint == outputTrade.outputToken.mint) {
           outputAmount += BigInt(trade.outputToken.amountRaw);
         }
+        if (trade.Pool && trade.Pool.length > 0 && !pools.includes(trade.Pool[0])) {
+          pools.push(trade.Pool[0]);
+        }
       }
 
       inputTrade.inputToken.amountRaw = inputAmount.toString();
@@ -121,10 +125,12 @@ export const getFinalSwap = (trades: TradeInfo[], dexInfo?: DexInfo): TradeInfo 
 
       outputTrade.outputToken.amountRaw = outputAmount.toString();
       outputTrade.outputToken.amount = convertToUiAmount(outputAmount, outputTrade.outputToken.decimals);
+
     }
 
     return {
       type: getTradeType(inputTrade.inputToken.mint, outputTrade.outputToken.mint),
+      Pool: pools,
       inputToken: inputTrade.inputToken,
       outputToken: outputTrade.outputToken,
       user: inputTrade.user,

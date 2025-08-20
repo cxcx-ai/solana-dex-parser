@@ -37,6 +37,7 @@ export class JupiterDcaParser extends BaseParser {
 
     const trade = {
       type: tradeType,
+       Pool: [],
       inputToken: {
         mint: event.inputMint,
         amount: convertToUiAmount(event.inAmount, inputDecimal),

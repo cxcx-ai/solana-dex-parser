@@ -24,6 +24,7 @@ export const getPumpfunTradeInfo = (
   const isBuy = tradeType === 'BUY';
   return {
     type: tradeType,
+    Pool: [],
     inputToken: {
       mint: isBuy ? TOKENS.SOL : event.mint,
       amount: isBuy ? convertToUiAmount(event.solAmount) : convertToUiAmount(event.tokenAmount, 6),
@@ -76,6 +77,7 @@ export const getPumpswapBuyInfo = (
 
   const trade = {
     type: getTradeType(inputMint, outputMint),
+    Pool: [event.pool],
     inputToken: {
       mint: inputMint,
       amount: convertToUiAmount(event.quoteAmountInWithLpFee, inputDecimal),
@@ -158,6 +160,7 @@ export const getPumpswapSellInfo = (
 
   const trade = {
     type: getTradeType(inputMint, outputMint),
+    Pool: [event.pool],
     inputToken: {
       mint: inputMint,
       amount: convertToUiAmount(event.baseAmountIn, inputDecimal),

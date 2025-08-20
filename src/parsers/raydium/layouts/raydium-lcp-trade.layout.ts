@@ -14,6 +14,7 @@ export class RaydiumLCPTradeLayout {
   amountOut: bigint;
   protocolFee: bigint;
   platformFee: bigint;
+  creatorFee: bigint;
   shareFee: bigint;
   tradeDirection: TradeDirection;
   poolStatus: PoolStatus;
@@ -31,6 +32,7 @@ export class RaydiumLCPTradeLayout {
     amountOut: bigint;
     protocolFee: bigint;
     platformFee: bigint;
+    creatorFee: bigint;
     shareFee: bigint;
     tradeDirection: TradeDirection;
     poolStatus: PoolStatus;
@@ -47,6 +49,7 @@ export class RaydiumLCPTradeLayout {
     this.amountOut = fields.amountOut;
     this.protocolFee = fields.protocolFee;
     this.platformFee = fields.platformFee;
+    this.creatorFee = fields.creatorFee;
     this.shareFee = fields.shareFee;
     this.tradeDirection = fields.tradeDirection;
     this.poolStatus = fields.poolStatus;
@@ -70,6 +73,7 @@ export class RaydiumLCPTradeLayout {
           ['amountOut', 'u64'],
           ['protocolFee', 'u64'],
           ['platformFee', 'u64'],
+          ['creatorFee', 'u64'],
           ['shareFee', 'u64'],
           ['tradeDirection', 'u8'],
           ['poolStatus', 'u8'],
@@ -81,17 +85,18 @@ export class RaydiumLCPTradeLayout {
   toObject(): RaydiumLCPTradeEvent {
     return {
       poolState: base58.encode(this.poolState),
-      totalBaseSell: this.totalBaseSell,
-      virtualBase: this.virtualBase,
-      virtualQuote: this.virtualQuote,
-      realBaseBefore: this.realBaseBefore,
-      realQuoteBefore: this.realQuoteBefore,
-      realBaseAfter: this.realBaseAfter,
-      amountIn: this.amountIn,
-      amountOut: this.amountOut,
-      protocolFee: this.protocolFee,
-      platformFee: this.platformFee,
-      shareFee: this.shareFee,
+      totalBaseSell: BigInt(this.totalBaseSell),
+      virtualBase: BigInt(this.virtualBase),
+      virtualQuote: BigInt(this.virtualQuote),
+      realBaseBefore: BigInt(this.realBaseBefore),
+      realQuoteBefore: BigInt(this.realQuoteBefore),
+      realBaseAfter: BigInt(this.realBaseAfter),
+      amountIn: BigInt(this.amountIn),
+      amountOut: BigInt(this.amountOut),
+      protocolFee: BigInt(this.protocolFee),
+      platformFee: BigInt(this.platformFee),
+      creatorFee: BigInt(this.creatorFee),
+      shareFee: BigInt(this.shareFee),
       tradeDirection: this.tradeDirection,
       poolStatus: this.poolStatus,
       baseMint: '',

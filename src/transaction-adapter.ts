@@ -1,7 +1,7 @@
 import { MessageV0, PublicKey, TokenAmount } from '@solana/web3.js';
 import base58 from 'bs58';
 import { SPL_TOKEN_INSTRUCTION_TYPES, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, TOKENS } from './constants';
-import { BalanceChange, convertToUiAmount, ParseConfig, PoolEventType, SolanaTransaction, TokenInfo } from './types';
+import { BalanceChange, convertToUiAmount, ParseConfig, PoolEventType, SolanaTransaction, TokenInfo, TransactionStatus } from './types';
 import { decodeInstructionData, getInstructionData, getProgramName, getPubkeyString } from './utils';
 
 /**
@@ -130,6 +130,20 @@ export class TransactionAdapter {
     };
   }
 
+  get computeUnits(): number {
+    return this.tx.meta?.computeUnitsConsumed || 0;
+  }
+
+  get txStatus(): TransactionStatus {
+    if (this.tx.meta == null) {
+      return 'unknown'
+    }
+    if (this.tx.meta.err == null) {
+      return 'success'
+    }
+    return 'failed'
+  }
+
   extractAccountKeys() {
     if (this.isMessageV0) {
       const keys = this.txMessage.staticAccountKeys.map((it: any) => getPubkeyString(it)) || [];
@@ -180,15 +194,15 @@ export class TransactionAdapter {
   getAccountKeys(accounts: any[]): string[] {
     return accounts && accounts.length
       ? accounts.map((it: any) => {
-          if (it instanceof PublicKey) return it.toBase58();
-          if (typeof it == 'string') return it;
-          if (typeof it == 'number') return this.accountKeys[it];
-          if ('pubkey' in it) return getPubkeyString(it.pubkey);
-          if (it instanceof Buffer) return base58.encode(it);
-          if ('type' in it && it.type == 'Buffer') return base58.encode(it.data);
-          if (Array.isArray(it)) return base58.encode(it);
-          return it;
-        })
+        if (it instanceof PublicKey) return it.toBase58();
+        if (typeof it == 'string') return it;
+        if (typeof it == 'number') return this.accountKeys[it];
+        if ('pubkey' in it) return getPubkeyString(it.pubkey);
+        if (it instanceof Buffer) return base58.encode(it);
+        if ('type' in it && it.type == 'Buffer') return base58.encode(it.data);
+        if (Array.isArray(it)) return base58.encode(it);
+        return it;
+      })
       : [];
   }
 
@@ -288,7 +302,7 @@ export class TransactionAdapter {
       accountKey == ''
         ? undefined
         : this.tx.meta?.postTokenBalances?.find((balance) => this.accountKeys[balance.accountIndex] === accountKey)
-            ?.uiTokenAmount
+          ?.uiTokenAmount
     );
   }
 
@@ -297,7 +311,7 @@ export class TransactionAdapter {
       accountKey == ''
         ? undefined
         : this.tx.meta?.preTokenBalances?.find((balance) => this.accountKeys[balance.accountIndex] === accountKey)
-            ?.uiTokenAmount
+          ?.uiTokenAmount
     );
   }
 

@@ -22,9 +22,10 @@ export const getRaydiumTradeInfo = (
   const { mint: inputMint, decimals: inputDecimal } = inputToken;
   const { mint: outputMint, decimals: ouptDecimal } = outputToken;
   const isBuy = event.tradeDirection === TradeDirection.Buy;
-  const fee = BigInt(event.protocolFee) + BigInt(event.platformFee);
+  const fee = BigInt(event.protocolFee) + BigInt(event.creatorFee) + BigInt(event.platformFee);
   return {
     type: isBuy ? 'BUY' : 'SELL',
+    Pool: [event.poolState],
     inputToken: {
       mint: inputMint,
       amount: convertToUiAmount(event.amountIn, inputDecimal),

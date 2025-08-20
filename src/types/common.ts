@@ -1,5 +1,3 @@
-import { TransactionAdapter } from '../transaction-adapter';
-import { TransactionUtils } from '../transaction-utils';
 import { PoolEvent } from './pool';
 import { TokenAmount, TradeInfo, TransferData } from './trade';
 
@@ -16,20 +14,25 @@ export interface BalanceChange {
   change: TokenAmount;
 }
 
+export type TransactionStatus = 'unknown' | 'success' | 'failed';
+
 export interface ParseResult {
   state: boolean;
   fee: TokenAmount; // transaction gas fee
+  aggregateTrade?: TradeInfo;
   trades: TradeInfo[];
   liquidities: PoolEvent[];
   transfers: TransferData[];
   solBalanceChange?: BalanceChange; // SOL balance change
   tokenBalanceChange?: Map<string, BalanceChange>; // token balance change, key is token mint address
   moreEvents: Record<string, any[]>; // other events, key is Amm name
+  slot: number;
+  timestamp: number;
+  signature: string; // Transaction signature
+  signer: string[]; // signers
+  computeUnits: number; // compute units consumed
+  txStatus: TransactionStatus;  // Transaction status
   msg?: string;
-  context: {
-    utils: TransactionUtils;
-    adapter: TransactionAdapter;
-  };
 }
 
 export interface ParseShredResult {

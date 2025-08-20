@@ -1,4 +1,5 @@
 import { ParsedTransactionWithMeta, TransactionResponse, VersionedTransactionResponse } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 
 /**
  * Union type for different Solana transaction formats
@@ -144,8 +145,10 @@ export interface FeeInfo {
 export interface TradeInfo {
   user: string; // Signer address (trader)
   type: TradeType; // Trade direction (BUY/SELL)
+  Pool: string[]; // Pool address
   inputToken: TokenInfo; // Token being sold
   outputToken: TokenInfo; // Token being bought
+  slippageBps?: number; // Slippage in basis points
   fee?: FeeInfo; // Fee information (if applicable)
   fees?: FeeInfo[]; // List of fees (if multiple)
   programId?: string; // DEX program ID

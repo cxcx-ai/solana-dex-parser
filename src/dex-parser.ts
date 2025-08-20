@@ -96,6 +96,7 @@ export class DexParser {
     [DEX_PROGRAMS.RAYDIUM_CL.id]: RaydiumParser,
     [DEX_PROGRAMS.RAYDIUM_CPMM.id]: RaydiumParser,
     [DEX_PROGRAMS.RAYDIUM_V4.id]: RaydiumParser,
+    [DEX_PROGRAMS.RAYDIUM_AMM.id]: RaydiumParser,
     [DEX_PROGRAMS.RAYDIUM_LCP.id]: RaydiumLaunchpadParser,
     [DEX_PROGRAMS.ORCA.id]: OrcaParser,
     [DEX_PROGRAMS.BOOP_FUN.id]: BoopfunParser,
@@ -122,7 +123,7 @@ export class DexParser {
     [DEX_PROGRAMS.JUPITER_LIMIT_ORDER_V2.id]: JupiterLimitOrderV2Parser,
   };
 
-  constructor() {}
+  constructor() { }
 
   /**
    * Parse transaction with specific type
@@ -139,7 +140,13 @@ export class DexParser {
       liquidities: [],
       transfers: [],
       moreEvents: {},
-      context: {} as any,
+      slot: tx.slot,
+      msg: '',
+      timestamp: 0,
+      signature: '',
+      signer: [],
+      computeUnits: 0,
+      txStatus: 'unknown'
     };
 
     try {
@@ -147,14 +154,15 @@ export class DexParser {
       const utils = new TransactionUtils(adapter);
       const classifier = new InstructionClassifier(adapter);
 
-      result.context = {
-        utils,
-        adapter,
-      };
-
       // Get DEX information and validate
       const dexInfo = utils.getDexInfo(classifier);
       const allProgramIds = classifier.getAllProgramIds();
+
+      result.timestamp = adapter.blockTime;
+      result.signature = adapter.signature;
+      result.signer = adapter.signers;
+      result.computeUnits = adapter.computeUnits;
+      result.txStatus = adapter.txStatus;
 
       if (config?.programIds && !config.programIds.some((id) => allProgramIds.includes(id))) {
         result.state = false;
@@ -162,6 +170,7 @@ export class DexParser {
       }
 
       const transferActions = utils.getTransferActions(['mintTo', 'burn', 'mintToChecked', 'burnChecked']);
+
       // Process fee
       result.fee = adapter.fee;
 
@@ -197,7 +206,7 @@ export class DexParser {
             const trades = parser.processTrades();
             if (trades.length > 0) {
               if (config.aggregateTrades == true) {
-                result.trades.push(utils.attachTradeFee(getFinalSwap(trades))!);
+                result.aggregateTrade = utils.attachTradeFee(getFinalSwap(trades))!;
               } else {
                 result.trades.push(...trades);
               }
@@ -254,6 +263,9 @@ export class DexParser {
       // Deduplicate trades
       if (result.trades.length > 0) {
         result.trades = [...new Map(result.trades.map((item) => [`${item.idx}-${item.signature}`, item])).values()];
+        if (config.aggregateTrades == true) {
+          result.aggregateTrade = utils.attachTradeFee(getFinalSwap(result.trades))!;
+        }
       }
 
       // Process transfer if needed (if no trades and no liquidity)

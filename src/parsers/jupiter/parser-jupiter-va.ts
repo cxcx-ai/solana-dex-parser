@@ -36,6 +36,7 @@ export class JupiterVAParser extends BaseParser {
 
     const trade = {
       type: tradeType,
+       Pool: [],
       inputToken: {
         mint: event.inputMint,
         amount: convertToUiAmount(event.inputAmount, inputDecimal),
