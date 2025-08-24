@@ -25,7 +25,7 @@ import { convertToUiAmount, DexInfo, PoolEvent, TokenInfo, TradeInfo, TransferDa
 import { getTradeType } from './utils';
 
 export class TransactionUtils {
-  constructor(private adapter: TransactionAdapter) {}
+  constructor(private adapter: TransactionAdapter) { }
 
   /**
    * Get DEX information from transaction
@@ -343,7 +343,7 @@ export class TransactionUtils {
     let inputToken = uniqueTokens[0];
     let outputToken = uniqueTokens[uniqueTokens.length - 1];
 
-    if (outputToken.source === signer) {
+    if (outputToken.source == signer || outputToken.authority == signer) {
       [inputToken, outputToken] = [outputToken, inputToken];
     }
 
@@ -412,19 +412,19 @@ export class TransactionUtils {
   getTransferTokenInfo(transfer: TransferData): TokenInfo | null {
     return transfer?.info
       ? {
-          mint: transfer.info.mint,
-          amount: transfer.info.tokenAmount.uiAmount,
-          amountRaw: transfer.info.tokenAmount.amount,
-          decimals: transfer.info.tokenAmount.decimals,
-          authority: transfer.info.authority,
-          destination: transfer.info.destination,
-          destinationOwner: transfer.info.destinationOwner,
-          destinationBalance: transfer.info.destinationBalance,
-          destinationPreBalance: transfer.info.destinationPreBalance,
-          source: transfer.info.source,
-          sourceBalance: transfer.info.sourceBalance,
-          sourcePreBalance: transfer.info.sourcePreBalance,
-        }
+        mint: transfer.info.mint,
+        amount: transfer.info.tokenAmount.uiAmount,
+        amountRaw: transfer.info.tokenAmount.amount,
+        decimals: transfer.info.tokenAmount.decimals,
+        authority: transfer.info.authority,
+        destination: transfer.info.destination,
+        destinationOwner: transfer.info.destinationOwner,
+        destinationBalance: transfer.info.destinationBalance,
+        destinationPreBalance: transfer.info.destinationPreBalance,
+        source: transfer.info.source,
+        sourceBalance: transfer.info.sourceBalance,
+        sourcePreBalance: transfer.info.sourcePreBalance,
+      }
       : null;
   }
 

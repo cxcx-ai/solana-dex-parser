@@ -53,7 +53,7 @@ export const DISCRIMINATORS = {
     BUY_EVENT: new Uint8Array([228, 69, 165, 46, 81, 203, 154, 29, 103, 244, 82, 31, 44, 245, 119, 119]),
     SELL_EVENT: new Uint8Array([228, 69, 165, 46, 81, 203, 154, 29, 62, 47, 55, 10, 165, 3, 220, 42]),
   },
-  MOONSHOT: {
+  MOONIT: {
     BUY: new Uint8Array([102, 6, 61, 18, 1, 218, 235, 234]),
     SELL: new Uint8Array([51, 230, 133, 164, 1, 127, 131, 173]),
   },
@@ -132,6 +132,14 @@ export const DISCRIMINATORS = {
     REMOVE_LIQUIDITY: new Uint8Array([80, 85, 209, 72, 24, 206, 177, 108]), //remove_liquidity
     REMOVE_ALL_LIQUIDITY: new Uint8Array([10, 51, 61, 35, 112, 105, 24, 85]), // remove_all_liquidity
     CREATE_POSITION_EVENT: new Uint8Array([228, 69, 165, 46, 81, 203, 154, 29, 156, 15, 119, 198, 29, 181, 221, 55]), // EvtCreatePosition
+  },
+  METEORA_DBC: {
+    SWAP: new Uint8Array([248, 198, 158, 145, 225, 117, 135, 200]),
+    SWAP_V2: new Uint8Array([65, 75, 63, 76, 235, 91, 91, 136]),
+    INITIALIZE_VIRTUAL_POOL_WITH_SPL_TOKEN: new Uint8Array([140, 85, 215, 176, 102, 54, 104, 79]),
+    INITIALIZE_VIRTUAL_POOL_WITH_TOKEN2022: new Uint8Array([169, 118, 51, 78, 145, 110, 220, 155]),
+    METEORA_DBC_MIGRATE_DAMM: new Uint8Array([27, 1, 48, 22, 180, 63, 118, 217]),
+    METEORA_DBC_MIGRATE_DAMM_V2: new Uint8Array([156, 169, 230, 103, 53, 228, 80, 64]),
   },
   ORCA: {
     CREATE: new Uint8Array([242, 29, 134, 48, 58, 110, 14, 60]), // openPositionWithMetadata

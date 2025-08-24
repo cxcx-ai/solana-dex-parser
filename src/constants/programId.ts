@@ -1,3 +1,5 @@
+import { PublicKey } from "@solana/web3.js";
+
 export const DEX_PROGRAMS = {
   // DEX Aggregators
   JUPITER: {
@@ -137,6 +139,11 @@ export const DEX_PROGRAMS = {
     name: 'MeteoraDammV2',
     tags: ['amm'],
   },
+  METEORA_DBC: {
+    id: 'dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN',
+    name: 'MeteoraDBC',
+    tags: ['amm'],
+  },
   SERUM_V3: {
     id: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin',
     name: 'SerumV3',
@@ -228,9 +235,9 @@ export const DEX_PROGRAMS = {
     name: 'Mercurial',
     tags: ['amm'],
   },
-  MOONSHOT: {
+  MOONIT: {
     id: 'MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG',
-    name: 'Moonshot',
+    name: 'Moonit',
     tags: ['amm'],
   },
   ONEDEX: {
@@ -283,6 +290,21 @@ export const DEX_PROGRAMS = {
     name: 'ZeroFi',
     tags: ['amm'],
   },
+  SUGAR: {
+    id: 'deus4Bvftd5QKcEkE5muQaWGWDoma8GrySvPFrBPjhS',
+    name: 'Sugar',
+    tags: ['amm'],
+  },
+  HEAVEN: {
+    id: 'HEAVENoP2qxoeuF8Dj2oT1GHEnu49U5mJYkdeC8BAX2o',
+    name: 'Heaven',
+    tags: ['amm'],
+  },
+  HEAVEN_VAULT: {
+    id: 'HEvSKofvBgfaexv23kMabbYqxasxU3mQ4ibBMEmJWHny',
+    name: 'HeavenStore',
+    tags: ['vault'],
+  },
 };
 
 export const DEX_PROGRAM_IDS = Object.values(DEX_PROGRAMS).map((dex) => dex.id);
@@ -301,6 +323,8 @@ export const TOKEN_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 
 /** Address of the SPL Token 2022 program */
 export const TOKEN_2022_PROGRAM_ID = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb';
+
+export const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
 
 export const PUMPFUN_MIGRATORS = ['39azUYFWPz3VHgKCf3VChUwbpURdCHRxjWVowf5jUJjg'];
 

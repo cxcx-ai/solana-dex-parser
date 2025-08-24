@@ -26,7 +26,7 @@ describe('Dex Parser', () => {
 
     [
 
-      "2bG19j1twdgpKjbAUDVJNnGgqa9rz4kcuJJYg5Nyhb5jqGgd25SJBADtNMDrte4eFbeTENKiyBQb8Up6hn7EdoU3",
+      "2mhUaJ9DGMVA3AFFKh5qtVhgaR1TKMcssG19WU4urN3XAsLSukDDSh6s8unkFDC2v3PFjCGbTn4A35GMAoKVM9u8",
       // "3874qjiBkmSNk3rRMEst2fAfwSx9jPNNi3sCcFBxETzEYxpPeRnU9emKz26M2x3ttxJGJmjV4ctZziQMFmDgKBkZ", // multiple signers
       // "3Dd6Hr9AFFearu8MZ8V3Ukm2dAbWLQ3ZUbxTvfLBw1UtghqSc1mEsrgdcbqVYQrfozTy9wNYaHQoE5FqXqfTvHA", // pumpfun
       // "5pBu3T3iguqLpgtKTmhfiik13EruLVKNa28ZMtkrE2hhcM1hM1D7aNn7vgiqQsahFTaw6kiJiPre6suJAJdKrK2y", //pumpswap

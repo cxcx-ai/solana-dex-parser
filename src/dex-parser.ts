@@ -7,10 +7,12 @@ import {
   JupiterParser,
   JupiterVAParser,
   MeteoraDAMMPoolParser,
+  MeteoraDBCEventParser,
+  MeteoraDBCParser,
   MeteoraDLMMPoolParser,
   MeteoraParser,
   MeteoraPoolsParser,
-  MoonshotParser,
+  MoonitParser,
   OrcaLiquidityParser,
   OrcaParser,
   PumpfunEventParser,
@@ -86,10 +88,11 @@ export class DexParser {
     [DEX_PROGRAMS.JUPITER_DCA.id]: JupiterDcaParser,
     [DEX_PROGRAMS.JUPITER_VA.id]: JupiterVAParser,
     [DEX_PROGRAMS.JUPITER_LIMIT_ORDER_V2.id]: JupiterLimitOrderV2Parser,
-    [DEX_PROGRAMS.MOONSHOT.id]: MoonshotParser,
+    [DEX_PROGRAMS.MOONIT.id]: MoonitParser,
     [DEX_PROGRAMS.METEORA.id]: MeteoraParser,
     [DEX_PROGRAMS.METEORA_POOLS.id]: MeteoraParser,
     [DEX_PROGRAMS.METEORA_DAMM.id]: MeteoraParser,
+    [DEX_PROGRAMS.METEORA_DBC.id]: MeteoraDBCParser,
     [DEX_PROGRAMS.PUMP_FUN.id]: PumpfunParser,
     [DEX_PROGRAMS.PUMP_SWAP.id]: PumpswapParser,
     [DEX_PROGRAMS.RAYDIUM_ROUTE.id]: RaydiumParser,
@@ -330,6 +333,12 @@ export class DexParser {
       if (allProgramIds.includes(DEX_PROGRAMS.RAYDIUM_LCP.id)) {
         result.moreEvents[DEX_PROGRAMS.RAYDIUM_LCP.name] = new RaydiumLaunchpadEventParser(adapter).parseInstructions(
           classifier.getInstructions(DEX_PROGRAMS.RAYDIUM_LCP.id)
+        );
+      }
+
+      if (allProgramIds.includes(DEX_PROGRAMS.METEORA_DBC.id)) {
+        result.moreEvents[DEX_PROGRAMS.METEORA_DBC.name] = new MeteoraDBCEventParser(adapter, transferActions).parseInstructions(
+          classifier.getInstructions(DEX_PROGRAMS.METEORA_DBC.id)
         );
       }
     }

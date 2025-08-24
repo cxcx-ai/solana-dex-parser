@@ -1,7 +1,8 @@
 import base58 from 'bs58';
-import { DEX_PROGRAMS, TOKENS } from './constants';
-import { convertToUiAmount, DexInfo, TradeInfo, TradeType } from './types';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, DEX_PROGRAMS, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, TOKENS } from './constants';
+import { ClassifiedInstruction, convertToUiAmount, DexInfo, TradeInfo, TradeType } from './types';
 import { PublicKey } from '@solana/web3.js';
+
 
 /**
  * Get instruction data
@@ -73,8 +74,6 @@ export const getPubkeyString = (value: any): string => {
   return value;
 };
 
-// ... existing code ...
-
 /**
  * Sort an array of TradeInfo objects by their idx field
  * The idx format is 'main-sub', such as '1-0', '2-1', etc.
@@ -105,9 +104,9 @@ export const getFinalSwap = (trades: TradeInfo[], dexInfo?: DexInfo): TradeInfo 
     const outputTrade = trades[trades.length - 1];
     const pools: string[] = [];
 
+    let [inputAmount, outputAmount] = [0n, 0n];
     if (trades.length >= 2) {
       // Merge trades
-      let [inputAmount, outputAmount] = [0n, 0n];
       for (const trade of trades) {
         if (trade.inputToken.mint == inputTrade.inputToken.mint) {
           inputAmount += BigInt(trade.inputToken.amountRaw);
@@ -119,20 +118,21 @@ export const getFinalSwap = (trades: TradeInfo[], dexInfo?: DexInfo): TradeInfo 
           pools.push(trade.Pool[0]);
         }
       }
-
-      inputTrade.inputToken.amountRaw = inputAmount.toString();
-      inputTrade.inputToken.amount = convertToUiAmount(inputAmount, inputTrade.inputToken.decimals);
-
-      outputTrade.outputToken.amountRaw = outputAmount.toString();
-      outputTrade.outputToken.amount = convertToUiAmount(outputAmount, outputTrade.outputToken.decimals);
-
     }
 
     return {
       type: getTradeType(inputTrade.inputToken.mint, outputTrade.outputToken.mint),
       Pool: pools,
-      inputToken: inputTrade.inputToken,
-      outputToken: outputTrade.outputToken,
+      inputToken: {
+        ...inputTrade.inputToken,
+        amountRaw: inputAmount.toString(),
+        amount: convertToUiAmount(inputAmount, inputTrade.inputToken.decimals),
+      },
+      outputToken: {
+        ...outputTrade.outputToken,
+        amountRaw: outputAmount.toString(),
+        amount: convertToUiAmount(outputAmount, outputTrade.outputToken.decimals),
+      },
       user: inputTrade.user,
       programId: inputTrade.programId,
       amm: dexInfo?.amm || inputTrade.amm,
@@ -145,3 +145,55 @@ export const getFinalSwap = (trades: TradeInfo[], dexInfo?: DexInfo): TradeInfo 
   }
   return null;
 };
+
+// GetAssociatedTokenAddress
+export const findAssociatedTokenAddress = (
+  walletAddress: PublicKey,
+  tokenMintAddress: PublicKey,
+): { standard: PublicKey; token2022: PublicKey } => {
+  const standardATA = PublicKey.findProgramAddressSync(
+    [
+      walletAddress.toBuffer(),
+      new PublicKey(TOKEN_PROGRAM_ID).toBuffer(),
+      tokenMintAddress.toBuffer(),
+    ],
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+  )[0];
+
+  const token2022ATA = PublicKey.findProgramAddressSync(
+    [
+      walletAddress.toBuffer(),
+      new PublicKey(TOKEN_2022_PROGRAM_ID).toBuffer(),
+      tokenMintAddress.toBuffer(),
+    ],
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+  )[0];
+
+  return {
+    standard: standardATA,
+    token2022: token2022ATA
+  };
+};
+
+export const GetAccountTradeType = (userAccount: PublicKey, baseMint: PublicKey, inputUserAcount: PublicKey, outputUserAccount: PublicKey): TradeType => {
+
+  const { standard, token2022 } = findAssociatedTokenAddress(userAccount, baseMint)
+  if (standard.equals(inputUserAcount) || token2022.equals(inputUserAcount)) {
+    return 'SELL'
+  } else if (standard.equals(outputUserAccount) || token2022.equals(outputUserAccount)) {
+    return 'BUY'
+  }
+
+  return 'SWAP'
+}
+
+export const getPrevInstructionByProgramId = (instructions: ClassifiedInstruction[], instruction: ClassifiedInstruction) => {
+  for (let i = 0; i < instructions.length; i++) {
+    const inst = instructions[i];
+    if (inst.outerIndex == instruction.outerIndex && inst.innerIndex == instruction.innerIndex) {
+      if (i > 0)
+        return instructions[i - 1]
+    }
+  }
+  return null;
+}

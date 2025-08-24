@@ -1,5 +1,4 @@
 import { ParsedTransactionWithMeta, TransactionResponse, VersionedTransactionResponse } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
 
 /**
  * Union type for different Solana transaction formats
@@ -127,7 +126,7 @@ export interface TransferData {
 /**
  * Trade direction type
  */
-export type TradeType = 'BUY' | 'SELL';
+export type TradeType = 'BUY' | 'SELL' | 'SWAP' | 'CREATE' | 'MIGRATE' | 'COMPLETE' | 'ADD' | 'REMOVE' | 'LOCK' | 'BURN';
 
 export interface FeeInfo {
   mint: string; // Fee token mint address

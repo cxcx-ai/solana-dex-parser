@@ -75,7 +75,7 @@ export interface RaydiumLCPTradeEvent {
   amountOut: bigint;
   protocolFee: bigint;
   platformFee: bigint;
-  creatorFee: bigint;
+  creatorFee?: bigint;
   shareFee: bigint;
   tradeDirection: TradeDirection;
   poolStatus: PoolStatus;

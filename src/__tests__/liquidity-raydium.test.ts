@@ -33,7 +33,7 @@ const tests = {
     {
       signature: '5MRWUUoCWpaFm8B9jSoLp4w6B19p46jcJMQrm26SHHGRZQpAtG3mdEcqGVDwsgUEGKRmC1R6JMFS5NhzmXUnR3X1',
       type: 'CREATE',
-      desc: 'Moonshot > Raydium Liquidity Pool V4: initialize2',
+      desc: 'Moonit > Raydium Liquidity Pool V4: initialize2',
       name: 'SLTX',
       poolId: 'GHrKkupnWVxQokfCfrYtmQMKnVE5s9873gJCg3wGrcTw',
       token0Mint: '591irbGXZLfqDneLqwDHLJFgS9UxxVzBmyFkWPeTmoon',

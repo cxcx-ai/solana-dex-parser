@@ -14,9 +14,10 @@ import {
 import { getInstructionData, sortByIdx } from '../../utils';
 import { PoolCreateEventLayout } from './layouts/raydium-lcp-create.layout';
 import { RaydiumLCPTradeLayout } from './layouts/raydium-lcp-trade.layout';
+import { RaydiumLCPTradeV2Layout } from './layouts/raydium-lcp-trade_v2.layout';
 
 export class RaydiumLaunchpadEventParser {
-  constructor(private readonly adapter: TransactionAdapter) {}
+  constructor(private readonly adapter: TransactionAdapter) { }
 
   private readonly EventsParsers: Record<string, EventsParser<any>> = {
     CREATE: {
@@ -94,8 +95,13 @@ export class RaydiumLaunchpadEventParser {
     }
 
     // get event data from inner instruction
+
     const eventData = getInstructionData(eventInstruction).slice(16);
-    const layout = deserializeUnchecked(RaydiumLCPTradeLayout.schema, RaydiumLCPTradeLayout, Buffer.from(eventData));
+    const isNewVersion = eventData.length > 130; // 146
+    const layout =
+      isNewVersion
+        ? deserializeUnchecked(RaydiumLCPTradeV2Layout.schema, RaydiumLCPTradeV2Layout, Buffer.from(eventData))
+        : deserializeUnchecked(RaydiumLCPTradeLayout.schema, RaydiumLCPTradeLayout, Buffer.from(eventData));
     const event = layout.toObject();
     // get instruction accounts
     const accounts = this.adapter.getInstructionAccounts(options.instruction);

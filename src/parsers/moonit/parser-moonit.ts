@@ -4,7 +4,8 @@ import { convertToUiAmount, TradeInfo, TradeType } from '../../types';
 import { absBigInt, getInstructionData } from '../../utils';
 import { BaseParser } from '../base-parser';
 
-export class MoonshotParser extends BaseParser {
+// MoonShot
+export class MoonitParser extends BaseParser {
   public processTrades(): TradeInfo[] {
     const trades: TradeInfo[] = [];
 
@@ -22,7 +23,7 @@ export class MoonshotParser extends BaseParser {
 
   private isTradeInstruction(instruction: any, programId: string): boolean {
     const accounts = this.adapter.getInstructionAccounts(instruction);
-    return programId === DEX_PROGRAMS.MOONSHOT.id && accounts && accounts.length === 11;
+    return programId === DEX_PROGRAMS.MOONIT.id && accounts && accounts.length === 11;
   }
 
   private parseTradeInstruction(instruction: any, idx: string): TradeInfo | null {
@@ -33,37 +34,37 @@ export class MoonshotParser extends BaseParser {
       const discriminator = data.slice(0, 8);
       let tradeType: TradeType;
 
-      if (discriminator.equals(DISCRIMINATORS.MOONSHOT.BUY)) {
+      if (discriminator.equals(DISCRIMINATORS.MOONIT.BUY)) {
         tradeType = 'BUY';
-      } else if (discriminator.equals(DISCRIMINATORS.MOONSHOT.SELL)) {
+      } else if (discriminator.equals(DISCRIMINATORS.MOONIT.SELL)) {
         tradeType = 'SELL';
       } else {
         return null;
       }
 
-      const moonshotTokenMint = this.adapter.getInstructionAccounts(instruction)[6];
+      const moonitTokenMint = this.adapter.getInstructionAccounts(instruction)[6];
       const accountKeys = this.adapter.accountKeys;
       const collateralMint = this.detectCollateralMint(accountKeys);
-      const { tokenAmount, collateralAmount } = this.calculateAmounts(moonshotTokenMint, collateralMint);
+      const { tokenAmount, collateralAmount } = this.calculateAmounts(moonitTokenMint, collateralMint);
 
       const trade: TradeInfo = {
         type: tradeType,
         Pool: [accountKeys[2]],
         inputToken: {
-          mint: tradeType === 'BUY' ? collateralMint : moonshotTokenMint,
+          mint: tradeType === 'BUY' ? collateralMint : moonitTokenMint,
           amount: tradeType === 'BUY' ? (collateralAmount.uiAmount ?? 0) : (tokenAmount.uiAmount ?? 0),
           amountRaw: tradeType === 'BUY' ? collateralAmount.amount : tokenAmount.amount,
           decimals: tradeType === 'BUY' ? collateralAmount.decimals : tokenAmount.decimals,
         },
         outputToken: {
-          mint: tradeType === 'BUY' ? moonshotTokenMint : collateralMint,
+          mint: tradeType === 'BUY' ? moonitTokenMint : collateralMint,
           amount: tradeType === 'BUY' ? (tokenAmount.uiAmount ?? 0) : (collateralAmount.uiAmount ?? 0),
           amountRaw: tradeType === 'BUY' ? tokenAmount.amount : collateralAmount.amount,
           decimals: tradeType === 'BUY' ? tokenAmount.decimals : collateralAmount.decimals,
         },
         user: this.adapter.signer,
-        programId: DEX_PROGRAMS.MOONSHOT.id,
-        amm: DEX_PROGRAMS.MOONSHOT.name,
+        programId: DEX_PROGRAMS.MOONIT.id,
+        amm: DEX_PROGRAMS.MOONIT.name,
         route: this.dexInfo.route || '',
         slot: this.adapter.slot,
         timestamp: this.adapter.blockTime,
@@ -73,7 +74,7 @@ export class MoonshotParser extends BaseParser {
 
       return this.utils.attachTokenTransferInfo(trade, this.transferActions);
     } catch (error) {
-      console.error('Failed to parse Moonshot trade:', error);
+      console.error('Failed to parse Moonit trade:', error);
       throw error;
     }
   }

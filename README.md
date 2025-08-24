@@ -1,6 +1,6 @@
 # Solana Dex Transaction Parser
 
-A TypeScript library for parsing Solana DEX swap transactions. Supports multiple DEX protocols including Jupiter, Raydium, Meteora, PumpFun, BoopFun and Moonshot.
+A TypeScript library for parsing Solana DEX swap transactions. Supports multiple DEX protocols including Jupiter, Raydium, Meteora, PumpFun, BoopFun and Moonit.
 
 ## Future Development
 
@@ -26,7 +26,7 @@ to support future development. Thanks!
   - Pumpfun and Jupiter: parsing the event data
   - Raydium, Orca, and Meteora: parsing Transfer and TransferChecked methods of the token program
   - Raydium v4 Logs decoder (decode ray_log)
-  - Moonshot: parsing the instruction data of the Trade instruction
+  - Moonit: parsing the instruction data of the Trade instruction
 - Parse **Liquidity** transactions (create, add, remove)
   - Raydium V4
   - Raydium CL
@@ -47,7 +47,7 @@ to support future development. Thanks!
 - Meteora (DLMM and Pools)
 - PumpFun
 - PumpFun AMM (Pumpswap)
-- Moonshot
+- Moonit
 - Orca
 - Sanctum
 - Phoenix
@@ -509,7 +509,7 @@ Launchpad Outputs
 ## Note
 - Jupiter Swap outputs aggregated transaction records
 - Other aggregators (e.g., OKX) output multiple swap transaction records per AMM
-- Most swap records are parsed from transfer actions except for Jupiter, Pumpfun, and Moonshot
+- Most swap records are parsed from transfer actions except for Jupiter, Pumpfun, and Moonit
 - Orca Liquidity analysis: OrcaV1 and OrcaV2 support is limited
 
 ## Development
