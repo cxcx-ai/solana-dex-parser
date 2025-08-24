@@ -11,11 +11,11 @@ import {
   PumpfunEvent,
   PumpfunTradeEvent,
 } from '../../types';
-import { getInstructionData, sortByIdx } from '../../utils';
+import { getInstructionData, getPrevInstructionByIndex, sortByIdx } from '../../utils';
 import { BinaryReader } from '../binary-reader';
 
 export class PumpfunEventParser {
-  constructor(private readonly adapter: TransactionAdapter) {}
+  constructor(private readonly adapter: TransactionAdapter) { }
 
   private readonly eventParsers: Record<string, EventParser<any>> = {
     TRADE: {
@@ -49,6 +49,16 @@ export class PumpfunEventParser {
               if (discriminator.equals(parser.discriminator)) {
                 const eventData = parser.decode(data.slice(16));
                 if (!eventData) return null;
+
+                if (type == 'TRADE') {
+                  const prevInstruction = getPrevInstructionByIndex(instructions, outerIndex, innerIndex);
+                  if (prevInstruction) {
+                    const accounts = this.adapter.getInstructionAccounts(prevInstruction.instruction);
+                    if (accounts && accounts.length > 3) {
+                      eventData.bondingCurve = accounts[3];
+                    }
+                  }
+                }
 
                 return {
                   type: type as 'TRADE' | 'CREATE' | 'COMPLETE',

@@ -7,6 +7,7 @@ export interface PumpfunTradeEvent {
   timestamp: bigint;
   virtualSolReserves: bigint;
   virtualTokenReserves: bigint;
+  bondingCurve?: string;
 }
 
 export interface PumpfunCreateEvent {

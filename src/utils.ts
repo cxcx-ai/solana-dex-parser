@@ -187,10 +187,10 @@ export const GetAccountTradeType = (userAccount: PublicKey, baseMint: PublicKey,
   return 'SWAP'
 }
 
-export const getPrevInstructionByProgramId = (instructions: ClassifiedInstruction[], instruction: ClassifiedInstruction) => {
+export const getPrevInstructionByIndex = (instructions: ClassifiedInstruction[], outerIndex: number, innerIndex?: number) => {
   for (let i = 0; i < instructions.length; i++) {
     const inst = instructions[i];
-    if (inst.outerIndex == instruction.outerIndex && inst.innerIndex == instruction.innerIndex) {
+    if (inst.outerIndex == outerIndex && inst.innerIndex == innerIndex) {
       if (i > 0)
         return instructions[i - 1]
     }

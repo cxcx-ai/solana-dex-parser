@@ -24,7 +24,7 @@ export const getPumpfunTradeInfo = (
   const isBuy = tradeType === 'BUY';
   return {
     type: tradeType,
-    Pool: [],
+    Pool: event.bondingCurve ? [event.bondingCurve] : [],
     inputToken: {
       mint: isBuy ? TOKENS.SOL : event.mint,
       amount: isBuy ? convertToUiAmount(event.solAmount) : convertToUiAmount(event.tokenAmount, 6),
