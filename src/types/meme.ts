@@ -21,6 +21,8 @@ export interface MemeEvent {
   name?: string; // Token name
   symbol?: string; // Token symbol
   uri?: string; // Token metadata URI
+  decimals?: number; // Token decimals
+  totalSupply?: number; // Token total supply
 
   // Fee and economic fields
   fee?: number; // Fee (uint64 -> number)

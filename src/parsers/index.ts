@@ -5,4 +5,6 @@ export * from './orca';
 export * from './pumpfun';
 export * from './raydium';
 export * from './boopfun';
+export * from './heaven';
+export * from './sugar';
 export * from './binary-reader';

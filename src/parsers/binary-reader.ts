@@ -3,7 +3,7 @@ import base58 from 'bs58';
 export class BinaryReader {
   private offset = 0;
 
-  constructor(private buffer: Buffer) {}
+  constructor(private buffer: Buffer) { }
 
   readFixedArray(length: number): Buffer {
     this.checkBounds(length);
@@ -55,6 +55,10 @@ export class BinaryReader {
 
   readPubkey(): string {
     return base58.encode(Buffer.from(this.readFixedArray(32)));
+  }
+
+  remaining(): number {
+    return this.buffer.length - this.offset;
   }
 
   private checkBounds(length: number) {

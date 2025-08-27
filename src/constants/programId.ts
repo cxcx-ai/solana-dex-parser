@@ -315,7 +315,7 @@ export const SYSTEM_PROGRAMS = [
   'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
   'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
   'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-  'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+  // 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s', // metaplex
   'srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX', // openbook
 ];
 
@@ -327,6 +327,8 @@ export const TOKEN_2022_PROGRAM_ID = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuE
 export const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
 
 export const PUMPFUN_MIGRATORS = ['39azUYFWPz3VHgKCf3VChUwbpURdCHRxjWVowf5jUJjg'];
+
+export const METAPLEX_PROGRAM_ID = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
 
 export const FEE_ACCOUNTS = [
   '96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5', // Jitotip 1

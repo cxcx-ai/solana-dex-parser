@@ -27,7 +27,7 @@ describe('Parser', () => {
         }
       );
       if(!tx) throw new Error('Transaction not found');
-      const parser = new PumpfunEventParser(new TransactionAdapter(tx));
+      const parser = new PumpfunEventParser(new TransactionAdapter(tx),{});
       const events = parser.processEvents();
       console.log(events);
       expect(events.length).toBeGreaterThan(1);

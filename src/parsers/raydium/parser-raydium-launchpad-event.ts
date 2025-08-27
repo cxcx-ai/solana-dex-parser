@@ -6,10 +6,8 @@ import { TransactionAdapter } from '../../transaction-adapter';
 import {
   ClassifiedInstruction,
   EventsParser,
-  RaydiumLCPCompleteEvent,
-  RaydiumLCPCreateEvent,
-  RaydiumLCPEvent,
-  RaydiumLCPTradeEvent,
+  MemeEvent, TransferData,
+  convertToUiAmount
 } from '../../types';
 import { getInstructionData, sortByIdx } from '../../utils';
 import { PoolCreateEventLayout } from './layouts/raydium-lcp-create.layout';
@@ -17,7 +15,8 @@ import { RaydiumLCPTradeLayout } from './layouts/raydium-lcp-trade.layout';
 import { RaydiumLCPTradeV2Layout } from './layouts/raydium-lcp-trade_v2.layout';
 
 export class RaydiumLaunchpadEventParser {
-  constructor(private readonly adapter: TransactionAdapter) { }
+  constructor(private readonly adapter: TransactionAdapter,
+    private readonly transferActions: Record<string, TransferData[]>) { }
 
   private readonly EventsParsers: Record<string, EventsParser<any>> = {
     CREATE: {
@@ -42,12 +41,12 @@ export class RaydiumLaunchpadEventParser {
     },
   };
 
-  public processEvents(): RaydiumLCPEvent[] {
+  public processEvents(): MemeEvent[] {
     const instructions = new InstructionClassifier(this.adapter).getInstructions(DEX_PROGRAMS.RAYDIUM_LCP.id);
     return this.parseInstructions(instructions);
   }
 
-  public parseInstructions(instructions: ClassifiedInstruction[]): RaydiumLCPEvent[] {
+  public parseInstructions(instructions: ClassifiedInstruction[]): MemeEvent[] {
     return sortByIdx(
       instructions
         .map(({ instruction, outerIndex, innerIndex }) => {
@@ -62,17 +61,14 @@ export class RaydiumLaunchpadEventParser {
                   outerIndex,
                   innerIndex,
                 };
-                const eventData = parser.decode(data, options);
-                if (!eventData) return null;
+                const memeEvent = parser.decode(data, options);
+                if (!memeEvent) return null;
 
-                return {
-                  type: type as 'TRADE' | 'CREATE' | 'COMPLETE',
-                  data: eventData,
-                  slot: this.adapter.slot,
-                  timestamp: this.adapter.blockTime || 0,
-                  signature: this.adapter.signature,
-                  idx: `${outerIndex}-${innerIndex ?? 0}`,
-                };
+                memeEvent.signature = this.adapter.signature;
+                memeEvent.slots = this.adapter.slot;
+                memeEvent.timestamp = this.adapter.blockTime;
+                memeEvent.idx = `${outerIndex}-${innerIndex ?? 0}`;
+                return memeEvent;
               }
             }
           } catch (error) {
@@ -81,11 +77,11 @@ export class RaydiumLaunchpadEventParser {
           }
           return null;
         })
-        .filter((event): event is RaydiumLCPEvent => event !== null)
+        .filter((event): event is MemeEvent => event !== null)
     );
   }
 
-  private decodeTradeInstruction(data: Buffer, options: any): RaydiumLCPTradeEvent {
+  private decodeTradeInstruction(data: Buffer, options: any): MemeEvent {
     const eventInstruction = this.adapter.getInnerInstruction(
       options.outerIndex,
       options.innerIndex == undefined ? 0 : options.innerIndex + 1
@@ -102,48 +98,107 @@ export class RaydiumLaunchpadEventParser {
       isNewVersion
         ? deserializeUnchecked(RaydiumLCPTradeV2Layout.schema, RaydiumLCPTradeV2Layout, Buffer.from(eventData))
         : deserializeUnchecked(RaydiumLCPTradeLayout.schema, RaydiumLCPTradeLayout, Buffer.from(eventData));
-    const event = layout.toObject();
+    const evt = layout.toObject();
     // get instruction accounts
     const accounts = this.adapter.getInstructionAccounts(options.instruction);
-    event.user = accounts[0];
-    event.baseMint = accounts[9];
-    event.quoteMint = accounts[10];
-    return event as RaydiumLCPTradeEvent;
+    evt.user = accounts[0];
+    evt.baseMint = accounts[9];
+    evt.quoteMint = accounts[10];
+
+    let inputMint, outputMint;
+    let inputAmount, outputAmount;
+    let inputDecimals, outputDecimals;
+    if (evt.tradeDirection == 0) {
+      inputMint = evt.quoteMint;
+      inputAmount = evt.amountIn;
+      inputDecimals = 9;
+
+      outputMint = evt.baseMint;
+      outputAmount = evt.amountOut;
+      outputDecimals = 6;
+    }
+    else {
+      inputMint = evt.baseMint;
+      inputAmount = evt.amountIn;
+      inputDecimals = 6;
+      outputMint = evt.quoteMint;
+      outputAmount = evt.amountOut;
+      outputDecimals = 9;
+    }
+
+    return {
+      protocol: DEX_PROGRAMS.RAYDIUM_LCP.name,
+      type: evt.tradeDirection === 0 ? 'BUY' : 'SELL',
+      bondingCurve: evt.poolState,
+      baseMint: evt.baseMint,
+      quoteMint: evt.quoteMint,
+      user: evt.user,
+      inputToken: {
+        mint: inputMint,
+        amountRaw: inputAmount.toString(),
+        amount: convertToUiAmount(inputAmount, inputDecimals),
+        decimals: inputDecimals,
+      },
+      outputToken: {
+        mint: outputMint,
+        amountRaw: outputAmount.toString(),
+        amount: convertToUiAmount(outputAmount, outputDecimals),
+        decimals: outputDecimals,
+      },
+      fee: Number(evt.protocolFee),
+      platformFee: Number(evt.platformFee),
+      shareFee: Number(evt.shareFee),
+      creatorFee: evt.creatorFee,
+    } as MemeEvent;
   }
 
-  private decodeCreateEvent(data: Buffer, options: any): RaydiumLCPCreateEvent {
+  private decodeCreateEvent(data: Buffer, options: any): MemeEvent {
     const eventInstruction = this.adapter.instructions[options.outerIndex]; // find outer instruction
     if (!eventInstruction) {
       throw new Error('Event instruction not found');
     }
     // parse event data
     const eventData = data.slice(16);
-    const event = PoolCreateEventLayout.deserialize(eventData).toObject();
+    const evt = PoolCreateEventLayout.deserialize(eventData).toObject();
 
     // get instruction accounts
     const accounts = this.adapter.getInstructionAccounts(eventInstruction);
-    event.baseMint = accounts[6];
-    event.quoteMint = accounts[7];
+    evt.baseMint = accounts[6];
+    evt.quoteMint = accounts[7];
 
-    return event as RaydiumLCPCreateEvent;
+    return {
+      protocol: DEX_PROGRAMS.RAYDIUM_LCP.name,
+      type: 'CREATE',
+      timestamp: this.adapter.blockTime,
+      user: evt.creator,
+      baseMint: evt.baseMint,
+      quoteMint: evt.quoteMint,
+      name: evt.baseMintParam.name,
+      symbol: evt.baseMintParam.symbol,
+      uri: evt.baseMintParam.uri,
+      decimals: evt.baseMintParam.decimals,
+      bondingCurve: evt.poolState,
+      creator: evt.creator,
+    } as MemeEvent;
   }
 
-  private decodeCompleteInstruction(data: Buffer, options: any): RaydiumLCPCompleteEvent {
+  private decodeCompleteInstruction(data: Buffer, options: any): MemeEvent {
     const discriminator = Buffer.from(data.slice(0, 8));
     const accounts = this.adapter.getInstructionAccounts(options.instruction);
     const [baseMint, quoteMint, poolMint, lpMint] = discriminator.equals(DISCRIMINATORS.RAYDIUM_LCP.MIGRATE_TO_AMM)
       ? [accounts[1], accounts[2], accounts[13], accounts[16]]
       : [accounts[1], accounts[2], accounts[5], accounts[7]];
-    const amm = discriminator.equals(DISCRIMINATORS.RAYDIUM_LCP.MIGRATE_TO_AMM)
-      ? DEX_PROGRAMS.RAYDIUM_V4.name
-      : DEX_PROGRAMS.RAYDIUM_CPMM.name;
+    // const amm = discriminator.equals(DISCRIMINATORS.RAYDIUM_LCP.MIGRATE_TO_AMM)
+    //   ? DEX_PROGRAMS.RAYDIUM_V4.name
+    //   : DEX_PROGRAMS.RAYDIUM_CPMM.name;
 
     return {
-      baseMint,
-      quoteMint,
-      poolMint,
-      lpMint,
-      amm,
-    };
+      protocol: DEX_PROGRAMS.RAYDIUM_LCP.name,
+      type: 'COMPLETE',
+      timestamp: this.adapter.blockTime,
+      baseMint: baseMint,
+      quoteMint: quoteMint,
+      pool: poolMint,
+    } as MemeEvent
   }
 }

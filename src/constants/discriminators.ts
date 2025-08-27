@@ -39,6 +39,7 @@ export const DISCRIMINATORS = {
     TRADE_EVENT: new Uint8Array([228, 69, 165, 46, 81, 203, 154, 29, 189, 219, 127, 211, 78, 230, 97, 238]),
     CREATE_EVENT: new Uint8Array([228, 69, 165, 46, 81, 203, 154, 29, 27, 114, 169, 77, 222, 235, 99, 118]),
     COMPLETE_EVENT: new Uint8Array([228, 69, 165, 46, 81, 203, 154, 29, 95, 114, 97, 156, 212, 46, 152, 8]),
+    MIGRATE_EVENT: new Uint8Array([228, 69, 165, 46, 81, 203, 154, 29, 189, 233, 93, 185, 92, 148, 234, 148]),
   },
   PUMPSWAP: {
     CREATE_POOL: new Uint8Array([233, 146, 209, 142, 207, 104, 64, 188]),
@@ -56,6 +57,8 @@ export const DISCRIMINATORS = {
   MOONIT: {
     BUY: new Uint8Array([102, 6, 61, 18, 1, 218, 235, 234]),
     SELL: new Uint8Array([51, 230, 133, 164, 1, 127, 131, 173]),
+    CREATE: new Uint8Array([3, 44, 164, 184, 123, 13, 245, 179]),
+    MIGRATE: new Uint8Array([42, 229, 10, 231, 189, 62, 193, 174]),
   },
   RAYDIUM: {
     CREATE: new Uint8Array([1]),
@@ -151,10 +154,30 @@ export const DISCRIMINATORS = {
     OTHER2: new Uint8Array([70, 5, 132, 87, 86, 235, 177, 34]), //collectReward
   },
   BOOPFUN: {
-    CREATE: new Uint8Array([84, 52, 204, 228, 24, 140, 234, 75]),
+    CREATE: new Uint8Array([84, 52, 204, 228, 24, 140, 234, 75]), // create token
     DEPLOY: new Uint8Array([180, 89, 199, 76, 168, 236, 217, 138]), //deploy_bonding_curve
-    COMPLETE: new Uint8Array([45, 235, 225, 181, 17, 218, 64, 130]),
+    COMPLETE: new Uint8Array([45, 235, 225, 181, 17, 218, 64, 130]), // graduate
     BUY: new Uint8Array([138, 127, 14, 91, 38, 87, 115, 105]),
     SELL: new Uint8Array([109, 61, 40, 187, 230, 176, 135, 174]),
+  },
+  HEAVEN: {
+    BUY: new Uint8Array([102, 6, 61, 18, 1, 218, 235, 234]),
+    SELL: new Uint8Array([51, 230, 133, 164, 1, 127, 131, 173]),
+    CREATE_POOL: new Uint8Array([42, 43, 126, 56, 231, 10, 208, 53]),
+  },
+  METAPLEX: {
+    CREATE_MINT: new Uint8Array([42]),
+  },
+  SUGAR: {
+    BUY_EXACT_IN: new Uint8Array([250, 234, 13, 123, 213, 156, 19, 236]),
+    BUY_EXACT_OUT: new Uint8Array([24, 211, 116, 40, 105, 3, 153, 56]),
+    BUY_MAX_OUT: new Uint8Array([96, 177, 203, 117, 183, 65, 196, 177]),
+
+    SELL_EXACT_IN: new Uint8Array([149, 39, 222, 155, 211, 124, 152, 26]),
+    SELL_EXACT_OUT: new Uint8Array([149, 95, 200, 71, 34, 8, 9, 11, 166]),
+
+    CREATE: new Uint8Array([24, 30, 200, 40, 5, 28, 7, 119]),
+    INITIALIZE: new Uint8Array([175, 175, 109, 31, 13, 152, 155, 237]),
+    MIGRATE_TO_RADIUM: new Uint8Array([96, 230, 91, 140, 139, 40, 235, 142]),
   },
 } as const;

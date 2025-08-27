@@ -2,6 +2,7 @@ import { DEX_PROGRAMS } from './constants';
 import { InstructionClassifier } from './instruction-classifier';
 import {
   BoopfunEventParser,
+  HeavenEventParser,
   JupiterLimitOrderParser,
   JupiterLimitOrderV2Parser,
   JupiterParser,
@@ -12,6 +13,7 @@ import {
   MeteoraDLMMPoolParser,
   MeteoraParser,
   MeteoraPoolsParser,
+  MoonitEventParser,
   MoonitParser,
   OrcaLiquidityParser,
   OrcaParser,
@@ -26,6 +28,7 @@ import {
   RaydiumLaunchpadParser,
   RaydiumParser,
   RaydiumV4PoolParser,
+  SugarEventParser,
 } from './parsers';
 import { BoopfunParser } from './parsers/boopfun/parser-boopfun';
 import { JupiterDcaParser } from './parsers/jupiter/parser-jupiter-dca';
@@ -34,6 +37,7 @@ import { TransactionUtils } from './transaction-utils';
 import {
   ClassifiedInstruction,
   DexInfo,
+  MemeEvent,
   ParseConfig,
   ParseResult,
   PoolEvent,
@@ -76,6 +80,13 @@ type ParserTransferConstructor = new (
   classifiedInstructions: ClassifiedInstruction[]
 ) => {
   processTransfers(): TransferData[];
+};
+
+type ParserMemeEventConstructor = new (
+  adapter: TransactionAdapter,
+  transferActions: Record<string, TransferData[]>
+) => {
+  processEvents(): MemeEvent[];
 };
 
 /**
@@ -126,6 +137,17 @@ export class DexParser {
     [DEX_PROGRAMS.JUPITER_LIMIT_ORDER_V2.id]: JupiterLimitOrderV2Parser,
   };
 
+  // Meme parser mapping
+  private readonly parseMemeEventMap: Record<string, ParserMemeEventConstructor> = {
+    [DEX_PROGRAMS.PUMP_FUN.id]: PumpfunEventParser,
+    [DEX_PROGRAMS.METEORA_DBC.id]: MeteoraDBCEventParser,
+    [DEX_PROGRAMS.RAYDIUM_LCP.id]: RaydiumLaunchpadEventParser,
+    [DEX_PROGRAMS.BOOP_FUN.id]: BoopfunEventParser,
+    [DEX_PROGRAMS.MOONIT.id]: MoonitEventParser,
+    [DEX_PROGRAMS.HEAVEN.id]: HeavenEventParser,
+    [DEX_PROGRAMS.SUGAR.id]: SugarEventParser,
+  };
+
   constructor() { }
 
   /**
@@ -142,7 +164,7 @@ export class DexParser {
       trades: [],
       liquidities: [],
       transfers: [],
-      moreEvents: {},
+      memeEvents: [],
       slot: tx.slot,
       msg: '',
       timestamp: 0,
@@ -262,6 +284,14 @@ export class DexParser {
             result.liquidities.push(...utils.attachUserBalanceToLPs(parser.processLiquidity()));
           }
         }
+
+        if (parseType === 'all') {
+          const MemeParserClass = this.parseMemeEventMap[programId];
+          if (MemeParserClass) {
+            const parser = new MemeParserClass(adapter, transferActions);
+            result.memeEvents.push(...parser.processEvents());
+          }
+        }
       }
       // Deduplicate trades
       if (result.trades.length > 0) {
@@ -287,9 +317,6 @@ export class DexParser {
           }
         }
       }
-
-      // Process more events if needed
-      this.processMoreEvents(parseType, result, allProgramIds, adapter, transferActions, classifier);
     } catch (error) {
       if (config.throwError) {
         throw error;
@@ -300,48 +327,6 @@ export class DexParser {
     }
 
     return result;
-  }
-
-  private processMoreEvents(
-    parseType: string,
-    result: ParseResult,
-    allProgramIds: string[],
-    adapter: TransactionAdapter,
-    transferActions: Record<string, TransferData[]>,
-    classifier: InstructionClassifier
-  ) {
-    if (parseType === 'all') {
-      if (allProgramIds.includes(DEX_PROGRAMS.PUMP_FUN.id)) {
-        result.moreEvents[DEX_PROGRAMS.PUMP_FUN.name] = new PumpfunEventParser(adapter).parseInstructions(
-          classifier.getInstructions(DEX_PROGRAMS.PUMP_FUN.id)
-        );
-      }
-
-      if (allProgramIds.includes(DEX_PROGRAMS.PUMP_SWAP.id)) {
-        result.moreEvents[DEX_PROGRAMS.PUMP_SWAP.name] = new PumpswapEventParser(adapter).parseInstructions(
-          classifier.getInstructions(DEX_PROGRAMS.PUMP_SWAP.id)
-        );
-      }
-
-      if (allProgramIds.includes(DEX_PROGRAMS.BOOP_FUN.id)) {
-        result.moreEvents[DEX_PROGRAMS.BOOP_FUN.name] = new BoopfunEventParser(
-          adapter,
-          transferActions
-        ).parseInstructions(classifier.getInstructions(DEX_PROGRAMS.BOOP_FUN.id));
-      }
-
-      if (allProgramIds.includes(DEX_PROGRAMS.RAYDIUM_LCP.id)) {
-        result.moreEvents[DEX_PROGRAMS.RAYDIUM_LCP.name] = new RaydiumLaunchpadEventParser(adapter).parseInstructions(
-          classifier.getInstructions(DEX_PROGRAMS.RAYDIUM_LCP.id)
-        );
-      }
-
-      if (allProgramIds.includes(DEX_PROGRAMS.METEORA_DBC.id)) {
-        result.moreEvents[DEX_PROGRAMS.METEORA_DBC.name] = new MeteoraDBCEventParser(adapter, transferActions).parseInstructions(
-          classifier.getInstructions(DEX_PROGRAMS.METEORA_DBC.id)
-        );
-      }
-    }
   }
 
   /**

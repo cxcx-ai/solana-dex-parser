@@ -1,5 +1,9 @@
 # Solana Dex Transaction Parser
 
+[![npm version](https://img.shields.io/npm/v/solana-dex-parser.svg)](https://www.npmjs.com/package/solana-dex-parser)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+
 A TypeScript library for parsing Solana DEX swap transactions. Supports multiple DEX protocols including Jupiter, Raydium, Meteora, PumpFun, BoopFun and Moonit.
 
 ## Future Development
@@ -10,59 +14,72 @@ If you find this project useful, consider donating at
 
 to support future development. Thanks!
 
+## Contents
+
+- [Features](#features)
+- [Supported DEX Protocols](#supported-dex-protocols)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Examples](#examples)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
-- Parse **Swap** transactions from multiple DEX protocols
-  - Support for transfer and transfer-check instructions
-  - Detailed swap information extraction
-  - Raw amount fields support (`amountRaw`, `token0AmountRaw`, `token1AmountRaw`)
-  - Token account balance tracking (pre and post balances)
-  - Destination owner field support
-  - Support for multiple transaction formats:
-    - `getTransaction`/`getParsedTransaction`
-    - Transactions of `getBlock`/`getParsedBlock`
-    - **gRPC** raw data support
-- Parsing methods:
-  - Pumpfun and Jupiter: parsing the event data
-  - Raydium, Orca, and Meteora: parsing Transfer and TransferChecked methods of the token program
-  - Raydium v4 Logs decoder (decode ray_log)
-  - Moonit: parsing the instruction data of the Trade instruction
-- Parse **Liquidity** transactions (create, add, remove)
-  - Raydium V4
-  - Raydium CL
-  - Raydium CPMM
-  - Raydium Launchpad (including events parsing)
-  - Meteora DLMM
-  - Meteora Pools
-  - Orca
-  - Pumpfun AMM (Pumpswap)
-- Transfer parser support for non-trade and non-liquidity transactions
-- Comprehensive test coverage
-- Parsing result support moreEvents (Pumpfun/Pumpswap/RaydiumLaunchpad/Bootfun)
+✅ **DexParser** - Parse DEX transactions and extract Trade/Liquidity/Transfer data  
+✅ **Multi-Protocol Support** - Jupiter, Raydium, Orca, Meteora, Pumpfun, Moonit, etc.  
+✅ **Type Safety** - Strongly typed TypeScript interfaces  
+✅ **High Performance** - Optimized for large transaction volumes  
+✅ **Rich Data Extraction** - Trades, liquidity events, transfers, and fees  
+✅ **Block Processing** - Support for both getBlock and getParsedBlock  
+✅ **Meme Parsing** - MemeEvent parsers for Pumpfun/MeteoraDBC/Raydium Launchpad/Moonit .etc
+✅ **gRPC Support** - Raw data processing capabilities  
 
-## Supported DEX Protocols
+## Supported Protocols
 
-- Jupiter (Aggregator, DCA, VA, LimitOrderV2)
-- Raydium (V4, Route, CPMM, ConcentratedLiquidity, Lauchpad)
-- Meteora (DLMM and Pools)
-- PumpFun
-- PumpFun AMM (Pumpswap)
-- Moonit
-- Orca
-- Sanctum
-- Phoenix
-- Lifinity
-- OKX Dex
-- BoopFun
-  
-## Supported Trading Bot Programs
-- BananaGun
-- Mintech
-- Bloom
-- Maestro
-- Nova
-- Apepro
+### DEX Aggregators & Routers
+| Protocol | Trades | Liquidity | Transfers | Notes |
+|----------|--------|-----------|-----------|-------|
+| **Jupiter** (All versions) | ✅ | ❌ | ✅ | Priority parsing, aggregated trades |
+| **OKX DEX** | ✅ | ❌ | ✅ | Route aggregator |
 
+### Major AMMs
+| Protocol | Trades | Liquidity | Transfers | Notes |
+|----------|--------|-----------|-----------|-------|
+| **PumpSwap** | ✅ | ✅ | ✅ | Pumpfun AMM |
+| **Raydium V4** | ✅ | ✅ | ✅ | Classic AMM |
+| **Raydium CPMM** | ✅ | ✅ | ✅ | Constant product |
+| **Raydium CL** | ✅ | ✅ | ✅ | Concentrated liquidity |
+| **Orca Whirlpool** | ✅ | ✅ | ✅ | CL pools |
+| **Meteora DLMM** | ✅ | ✅ | ✅ | Dynamic liquidity |
+| **Meteora Pools** | ✅ | ✅ | ✅ | Multi-token AMM |
+| **Meteora DAMM V2** | ✅ | ✅ | ✅ | Dynamic AMM |
+| **Sanctum** | ✅ | ❌ | ✅ | LST swaps |
+| **Phoenix** | ✅ | ❌ | ✅ | Order book DEX |
+| **Lifinity** | ✅ | ❌ | ✅ | Proactive market maker |
+
+### Meme & Launch Platforms
+| Protocol | Trades | Create | Migrate | Notes |
+|----------|--------|-----------|-----------|-------|
+| **Pumpfun** | ✅ | ✅ | ✅ | Bonding curve |
+| **Raydium Launchpad** | ✅ | ✅ | ✅ | Meme launcher |
+| **Meteora DBC** | ✅ | ✅ | ✅ | Meme launcher |
+| **Moonit** | ✅ | ✅ | ✅ | Meme launcher |
+| **Heaven.xyz** | ✅ | ✅ | ✅ | Meme launcher |
+| **Sugar.money** | ✅ | ✅ | ✅ | Meme launcher |
+| **Bonk** | ✅ | ✅ | ✅ | Meme launcher |
+| **BoopFun** | ✅ | ✅ | ✅ | Meme launcher |
+
+### Trading Bots
+| Bot | Trades | Notes |
+|-----|--------|----------|
+| **BananaGun** | ✅ | MEV bot |
+| **Maestro** | ✅ | Trading bot |
+| **Nova** | ✅ | Sniper bot |
+| **Bloom** | ✅ | Copy trading |
+| **Mintech** | ✅ | Trading bot |
+| **Apepro** | ✅ | Trading bot |
 
 ## Installation
 
@@ -70,7 +87,7 @@ to support future development. Thanks!
 yarn add solana-dex-parser
 ```
 
-## Usage
+## Quick Start
 
 ### Configuration Options
 
@@ -114,6 +131,49 @@ async function parseAll() {
 }
 
 ```
+
+### Parse Result
+```typescript
+/**
+ * Complete parsing result containing all extracted transaction data
+ */
+export interface ParseResult {
+  /** Parsing success status - true if parsing completed successfully */
+  state: boolean;
+  /** Transaction gas fee paid in SOL */
+  fee: TokenAmount;
+  /** Aggregated trade information combining multiple related trades */
+  aggregateTrade?: TradeInfo;
+  /** Array of individual trade transactions found in the transaction */
+  trades: TradeInfo[];
+  /** Array of liquidity operations (add/remove/create pool) */
+  liquidities: PoolEvent[];
+  /** Array of token transfer operations not related to trades */
+  transfers: TransferData[];
+  /** SOL balance change for the transaction signer */
+  solBalanceChange?: BalanceChange;
+  /** Token balance changes mapped by token mint address */
+  tokenBalanceChange?: Map<string, BalanceChange>;
+  /** Meme platform events (create/buy/sell/migrate/complete) */
+  memeEvents: MemeEvent[];
+  /** Solana slot number where the transaction was included */
+  slot: number;
+  /** Unix timestamp when the transaction was processed */
+  timestamp: number;
+  /** Unique transaction signature identifier */
+  signature: string;
+  /** Array of public keys that signed this transaction */
+  signer: string[];
+  /** Compute units consumed by the transaction execution */
+  computeUnits: number;
+  /** Final execution status of the transaction */
+  txStatus: TransactionStatus;
+  /** Optional error or status message */
+  msg?: string;
+}
+```
+
+## Examples
 
 ### 1. Basic Usage > Swap (Buy and Sell)
 
@@ -565,4 +625,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-This project is a TypeScript port of the original Go implementation [solanaswap-go](https://github.com/franco-bianco/solanaswap-go).
+- **Solana Foundation** - Blockchain infrastructure and documentation
+- **DEX Protocol Teams** - Jupiter, Raydium, Orca, Meteora, and others for public APIs
+- **TypeScript Community** - Excellent tooling and libraries
+- **Contributors** - Community members improving the library
+- **Original Go Implementation** - [solanaswap-go](https://github.com/franco-bianco/solanaswap-go) for inspiration
+
+---
+
+**Built with ❤️ for the Solana ecosystem**

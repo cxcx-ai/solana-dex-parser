@@ -21,7 +21,7 @@ import {
   processTransfer,
   processTransferCheck,
 } from './transfer-utils';
-import { convertToUiAmount, DexInfo, PoolEvent, TokenInfo, TradeInfo, TransferData, TransferInfo } from './types';
+import { ClassifiedInstruction, convertToUiAmount, DexInfo, MemeEvent, PoolEvent, TokenInfo, TradeInfo, TransferData, TransferInfo } from './types';
 import { getTradeType } from './utils';
 
 export class TransactionUtils {
@@ -266,12 +266,12 @@ export class TransactionUtils {
   /**
    * Process swap data from transfers
    */
-  processSwapData(transfers: TransferData[], dexInfo: DexInfo): TradeInfo | null {
+  processSwapData(transfers: TransferData[], dexInfo: DexInfo, skipNative: boolean = true): TradeInfo | null {
     if (!transfers.length) {
       throw new Error('No swap data provided');
     }
 
-    const uniqueTokens = this.extractUniqueTokens(transfers);
+    const uniqueTokens = this.extractUniqueTokens(transfers, skipNative);
     if (uniqueTokens.length < 2) {
       return null;
       // throw `Insufficient unique tokens for swap`;
@@ -321,11 +321,14 @@ export class TransactionUtils {
   /**
    * Extract unique tokens from transfers
    */
-  private extractUniqueTokens(transfers: TransferData[]): TokenInfo[] {
+  private extractUniqueTokens(transfers: TransferData[], skipNative: boolean): TokenInfo[] {
     const uniqueTokens: TokenInfo[] = [];
     const seenTokens = new Set<string>();
 
     transfers.forEach((transfer) => {
+      if (skipNative && transfer.info.mint == (TOKENS.NATIVE)) {
+        return; // Skip native SOL transfers in most case (fee/tip/createAccount)
+      }
       const tokenInfo = this.getTransferTokenInfo(transfer);
       if (tokenInfo && !seenTokens.has(tokenInfo.mint)) {
         uniqueTokens.push(tokenInfo);
@@ -572,5 +575,191 @@ export class TransactionUtils {
       }
     }
     return trade;
+  }
+
+  /**
+   * Process transfer data for meme token events
+   * Handles the common transfer processing logic
+   * @param cInst Classified instruction
+   * @param event Meme event to update
+   * @param baseMint Base token mint address
+   * @param skipNative Whether to skip native SOL transfers
+   * @param transferStartIdx Starting index for transfer processing
+   * @returns Updated meme event or null if processing fails
+   */
+  processMemeTransferData(
+    cInst: ClassifiedInstruction,
+    event: MemeEvent,
+    baseMint: string,
+    skipNative: boolean,
+    transferStartIdx: number,
+    transferActions: Record<string, TransferData[]>
+  ): MemeEvent {
+    const transfers = this.getTransfersForInstruction(
+      transferActions,
+      cInst.programId,
+      cInst.outerIndex,
+      cInst.innerIndex
+    );
+    
+    if (transfers.length < 2) {
+      return event;
+    }
+
+    const dexInfo: DexInfo = {
+      programId: cInst.programId,
+      amm: this.getDexProgramName(cInst.programId),
+      route: '', // Will be set by getDexInfo if needed
+    };
+
+    const trade = this.processSwapData(transfers.slice(transferStartIdx), dexInfo, skipNative);
+    if (!trade) {
+      return event;
+    }
+
+    // Validate trade direction and token mints
+    if (event.type === 'BUY') {
+      if (trade.outputToken.mint !== baseMint) {
+        throw new Error(`baseMint mismatch: expected ${baseMint}, got ${trade.outputToken.mint}`);
+      }
+    } else if (event.type === 'SELL') {
+      if (trade.inputToken.mint !== baseMint) {
+        throw new Error(`baseMint mismatch: expected ${baseMint}, got ${trade.inputToken.mint}`);
+      }
+    }
+
+    this.updateMemeTokenInfo(event, trade);
+    return event;
+  }
+
+  /**
+   * Get DEX program name by program ID
+   * @param programId Program ID
+   * @returns Program name or 'Unknown'
+   */
+  private getDexProgramName(programId: string): string {
+    const dexProgram = Object.values(DEX_PROGRAMS).find((dex) => dex.id === programId);
+    return dexProgram?.name || 'Unknown';
+  }
+
+  /**
+   * Update meme event token information from trade data
+   * @param event Meme event to update
+   * @param trade Trade information source
+   */
+  updateMemeTokenInfo(event: MemeEvent, trade: TradeInfo): void {
+    // Initialize token info if not exists
+    if (!event.inputToken) {
+      event.inputToken = {
+        mint: '',
+        amount: 0,
+        amountRaw: '0',
+        decimals: 0
+      };
+    }
+    if (!event.outputToken) {
+      event.outputToken = {
+        mint: '',
+        amount: 0,
+        amountRaw: '0',
+        decimals: 0
+      };
+    }
+
+    // Update input token info
+    event.inputToken.mint = trade.inputToken.mint;
+    event.inputToken.amount = trade.inputToken.amount;
+    event.inputToken.amountRaw = trade.inputToken.amountRaw;
+    event.inputToken.decimals = trade.inputToken.decimals;
+
+    // Update output token info
+    event.outputToken.mint = trade.outputToken.mint;
+    event.outputToken.amount = trade.outputToken.amount;
+    event.outputToken.amountRaw = trade.outputToken.amountRaw;
+    event.outputToken.decimals = trade.outputToken.decimals;
+
+    // Update fee info if available
+    if (trade.fee) {
+      event.fee = trade.fee.amount;
+    } else if (trade.fees && trade.fees.length > 0) {
+      // Sum all fees if multiple fees exist
+      let totalFee = 0;
+      for (const fee of trade.fees) {
+        totalFee += fee.amount;
+      }
+      event.fee = totalFee;
+    }
+  }
+
+
+  /**
+   * Filter transfers for a specific instruction
+   * @param transferActions Map of transfer actions
+   * @param programId Program ID
+   * @param outerIndex Outer instruction index
+   * @param innerIndex Inner instruction index (optional)
+   * @param filterTypes Types to filter by
+   * @returns Filtered transfer data array
+   */
+  filterTransfersForInstruction(
+    transferActions: Record<string, TransferData[]>,
+    programId: string,
+    outerIndex: number,
+    innerIndex?: number,
+    filterTypes?: string[]
+  ): TransferData[] {
+    // Create the key to look up in the transferActions map
+    let key = `${programId}:${outerIndex}`;
+    if (innerIndex !== undefined) {
+      key += `-${innerIndex}`;
+    }
+
+    // Get transfers for the instruction
+    const transfers = transferActions[key];
+    if (!transfers) {
+      return [];
+    }
+
+    // If no filter types specified, return all transfers
+    if (!filterTypes || filterTypes.length === 0) {
+      return transfers;
+    }
+
+    // Filter transfers by type
+    const result: TransferData[] = [];
+    for (const transfer of transfers) {
+      for (const filterType of filterTypes) {
+        if (transfer.type === filterType) {
+          result.push(transfer);
+          break;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Get transfers for a specific instruction with default types
+   * Default types: transfer, transferChecked
+   * @param transferActions Map of transfer actions
+   * @param programId Program ID
+   * @param outerIndex Outer instruction index
+   * @param innerIndex Inner instruction index (optional)
+   * @param extraTypes Additional types to include
+   * @returns Transfer data array
+   */
+  getTransfersForInstruction(
+    transferActions: Record<string, TransferData[]>,
+    programId: string,
+    outerIndex: number,
+    innerIndex?: number,
+    extraTypes?: string[]
+  ): TransferData[] {
+    const defaultTypes = ['transfer', 'transferChecked'];
+    if (extraTypes) {
+      defaultTypes.push(...extraTypes);
+    }
+    return this.filterTransfersForInstruction(transferActions, programId, outerIndex, innerIndex, defaultTypes);
   }
 }

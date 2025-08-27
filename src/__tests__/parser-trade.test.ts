@@ -26,7 +26,7 @@ describe('Dex Parser', () => {
 
     [
 
-      "9qVcB6v7CecgVGsZJs9G23sedKiJMyCYdkcBYvnDyR5tx4TpWVSWcm9ESQiH6c4s2iKyJ8vo9MFZYt83QPHydjp",
+      "3Pv9fUMz8GwmeFmkU9kQ6fJUXHZWXbYJLH84wPPgVANqBfywqXQ8oE1D9grWfpMVanTyZRgadc28KT8VmG6Cfa4u",
       // "3874qjiBkmSNk3rRMEst2fAfwSx9jPNNi3sCcFBxETzEYxpPeRnU9emKz26M2x3ttxJGJmjV4ctZziQMFmDgKBkZ", // multiple signers
       // "3Dd6Hr9AFFearu8MZ8V3Ukm2dAbWLQ3ZUbxTvfLBw1UtghqSc1mEsrgdcbqVYQrfozTy9wNYaHQoE5FqXqfTvHA", // pumpfun
       // "5pBu3T3iguqLpgtKTmhfiik13EruLVKNa28ZMtkrE2hhcM1hM1D7aNn7vgiqQsahFTaw6kiJiPre6suJAJdKrK2y", //pumpswap
@@ -42,12 +42,13 @@ describe('Dex Parser', () => {
             maxSupportedTransactionVersion: 0,
           });
           if (!tx) { throw new Error(`Transaction not found > ${signature}`); }
-          const { fee, txStatus, aggregateTrade, trades, liquidities, transfers, solBalanceChange, tokenBalanceChange, moreEvents } = parser.parseAll(tx,
-            {
-              tryUnknowDEX: true, // set true, you can get trades
-              aggregateTrades: true
-            }
-          );
+          const { fee, txStatus, aggregateTrade, trades, liquidities, transfers,
+            solBalanceChange, tokenBalanceChange, memeEvents } = parser.parseAll(tx,
+              {
+                tryUnknowDEX: true, // set true, you can get trades
+                aggregateTrades: true
+              }
+            );
           // fs.writeFileSync(`./src/__tests__/tx-${signature}-parsed.json`, JSON.stringify(tx, null, 2));
 
           console.log('fee', fee);
@@ -58,8 +59,8 @@ describe('Dex Parser', () => {
           console.log('trades', JSON.stringify(trades, null, 2));
           console.log('liquidity', liquidities);
           console.log('transfer', JSON.stringify(transfers, null, 2));
-          console.log('moreEvents', JSONbig.stringify(moreEvents, null, 2));
-          expect(trades.length + liquidities.length + transfers.length).toBeGreaterThanOrEqual(1);
+          console.log('memeEvents', JSONbig.stringify(memeEvents, null, 2));
+          expect(trades.length + liquidities.length + transfers.length + memeEvents.length).toBeGreaterThanOrEqual(1);
         });
       });
   });

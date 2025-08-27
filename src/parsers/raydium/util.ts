@@ -1,8 +1,8 @@
 import { DEX_PROGRAMS } from '../../constants';
-import { convertToUiAmount, DexInfo, RaydiumLCPTradeEvent, TradeDirection, TradeInfo } from '../../types';
+import { convertToUiAmount, DexInfo, MemeEvent, RaydiumLCPTradeEvent, TradeDirection, TradeInfo } from '../../types';
 
 export const getRaydiumTradeInfo = (
-  event: RaydiumLCPTradeEvent,
+  event: MemeEvent,
   inputToken: {
     mint: string;
     decimals: number;
@@ -21,23 +21,13 @@ export const getRaydiumTradeInfo = (
 ): TradeInfo => {
   const { mint: inputMint, decimals: inputDecimal } = inputToken;
   const { mint: outputMint, decimals: ouptDecimal } = outputToken;
-  const isBuy = event.tradeDirection === TradeDirection.Buy;
-  const fee = BigInt(event.protocolFee) + BigInt(event.creatorFee || 0) + BigInt(event.platformFee);
+  const isBuy = event.type === 'BUY';
+  const fee = BigInt(event.protocolFee ?? 0) + BigInt(event.creatorFee ?? 0) + BigInt(event.platformFee ?? 0);
   return {
     type: isBuy ? 'BUY' : 'SELL',
-    Pool: [event.poolState],
-    inputToken: {
-      mint: inputMint,
-      amount: convertToUiAmount(event.amountIn, inputDecimal),
-      amountRaw: event.amountIn.toString(),
-      decimals: inputDecimal,
-    },
-    outputToken: {
-      mint: outputMint,
-      amount: convertToUiAmount(event.amountOut, ouptDecimal),
-      amountRaw: event.amountOut.toString(),
-      decimals: ouptDecimal,
-    },
+    Pool: event.pool ? [event.pool] : [],
+    inputToken: event.inputToken!,
+    outputToken: event.outputToken!,
     fee: {
       mint: isBuy ? inputMint : outputMint,
       amount: convertToUiAmount(fee, isBuy ? inputDecimal : ouptDecimal),

@@ -1,17 +1,14 @@
-import { DEX_PROGRAMS, TOKENS } from '../../constants';
+import { DEX_PROGRAMS } from '../../constants';
 import {
   DexInfo,
-  PumpfunTradeEvent,
-  PumpswapBuyEvent,
+  MemeEvent, PumpswapBuyEvent,
   PumpswapSellEvent,
-  TradeInfo,
-  TradeType,
-  convertToUiAmount,
+  TradeInfo, convertToUiAmount
 } from '../../types';
 import { getTradeType } from '../../utils';
 
 export const getPumpfunTradeInfo = (
-  event: PumpfunTradeEvent,
+  event: MemeEvent,
   info: {
     slot: number;
     signature: string;
@@ -20,23 +17,12 @@ export const getPumpfunTradeInfo = (
     dexInfo?: DexInfo;
   }
 ): TradeInfo => {
-  const tradeType: TradeType = event.isBuy ? 'BUY' : 'SELL';
-  const isBuy = tradeType === 'BUY';
+ 
   return {
-    type: tradeType,
+    type: event.type,
     Pool: event.bondingCurve ? [event.bondingCurve] : [],
-    inputToken: {
-      mint: isBuy ? TOKENS.SOL : event.mint,
-      amount: isBuy ? convertToUiAmount(event.solAmount) : convertToUiAmount(event.tokenAmount, 6),
-      amountRaw: isBuy ? event.solAmount.toString() : event.tokenAmount.toString(),
-      decimals: isBuy ? 9 : 6,
-    },
-    outputToken: {
-      mint: isBuy ? event.mint : TOKENS.SOL,
-      amount: isBuy ? convertToUiAmount(event.tokenAmount, 6) : convertToUiAmount(event.solAmount),
-      amountRaw: isBuy ? event.tokenAmount.toString() : event.solAmount.toString(),
-      decimals: isBuy ? 6 : 9,
-    },
+    inputToken: event.inputToken!,
+    outputToken: event.outputToken!,
     user: event.user,
     programId: DEX_PROGRAMS.PUMP_FUN.id,
     amm: info.dexInfo?.amm || DEX_PROGRAMS.PUMP_FUN.name,
