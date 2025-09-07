@@ -1,6 +1,6 @@
 {
   "name": "solana-dex-parser",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "description": "Solana Dex Transaction Parser",
   "author": "cxcx",
   "license": "MIT",
@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@solana/web3.js": "^1.87.0",
+    "borsh": "0.7.0",
     "dotenv": "^16.4.7"
   },
   "devDependencies": {

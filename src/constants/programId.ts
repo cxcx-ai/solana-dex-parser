@@ -319,6 +319,10 @@ export const SYSTEM_PROGRAMS = [
   'srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX', // openbook
 ];
 
+export const SKIP_PROGRAM_IDS = [
+  'pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ', // Pumpswap Fee
+];
+
 export const TOKEN_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 
 /** Address of the SPL Token 2022 program */

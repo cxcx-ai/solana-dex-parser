@@ -11,6 +11,8 @@ export const getInstructionData = (instruction: any): Buffer => {
   if ('data' in instruction) {
     return decodeInstructionData(instruction.data);
   }
+  // log instruction.data, maybe need to converting here
+  console.log('instruction.data', instruction.data);
   return instruction.data;
 };
 

@@ -1,4 +1,4 @@
-import { DEX_PROGRAMS, FEE_ACCOUNTS, SYSTEM_PROGRAMS, TOKENS } from './constants';
+import { DEX_PROGRAMS, FEE_ACCOUNTS, SKIP_PROGRAM_IDS, SYSTEM_PROGRAMS, TOKENS } from './constants';
 import { InstructionClassifier } from './instruction-classifier';
 import { TransactionAdapter } from './transaction-adapter';
 import {
@@ -221,7 +221,8 @@ export class TransactionUtils {
    * Check if program should be ignored for grouping
    */
   isIgnoredProgram(programId: string): boolean {
-    return Object.values(DEX_PROGRAMS)
+    return SKIP_PROGRAM_IDS.includes(programId) ||
+      Object.values(DEX_PROGRAMS)
       .filter((it) => it.tags.includes('vault'))
       .map((it) => it.id)
       .includes(programId);

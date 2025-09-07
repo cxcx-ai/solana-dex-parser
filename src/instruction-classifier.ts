@@ -1,4 +1,4 @@
-import { SYSTEM_PROGRAMS } from './constants';
+import { SKIP_PROGRAM_IDS, SYSTEM_PROGRAMS } from './constants';
 import { TransactionAdapter } from './transaction-adapter';
 import { ClassifiedInstruction } from './types/common';
 import { getInstructionData } from './utils';
@@ -68,6 +68,6 @@ export class InstructionClassifier {
   }
 
   public getAllProgramIds(): string[] {
-    return Array.from(this.instructionMap.keys()).filter((it) => !SYSTEM_PROGRAMS.includes(it));
+    return Array.from(this.instructionMap.keys()).filter((it) => !SYSTEM_PROGRAMS.includes(it) && !SKIP_PROGRAM_IDS.includes(it));
   }
 }
