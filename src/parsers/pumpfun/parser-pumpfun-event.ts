@@ -223,6 +223,7 @@ export class PumpfunEventParser {
       quoteMint: TOKENS.SOL,
       bondingCurve: evt.bondingCurve,
       pool: evt.pool,
+      poolDex: DEX_PROGRAMS.PUMP_SWAP.name,
     } as MemeEvent
   }
 }

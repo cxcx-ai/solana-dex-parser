@@ -76,11 +76,12 @@ export class MeteoraDBCEventParser extends BaseEventParser {
                   outerIndex,
                   innerIndex,
                 };
-                const memeEvent = parser.decode(data.slice(parser.slice), options);
+                const memeEvent: MemeEvent = parser.decode(data.slice(parser.slice), options);
                 if (!memeEvent) return null;
 
+                memeEvent.protocol = DEX_PROGRAMS.METEORA_DBC.name;
                 memeEvent.signature = this.adapter.signature;
-                memeEvent.slots = this.adapter.slot;
+                memeEvent.slot = this.adapter.slot;
                 memeEvent.timestamp = this.adapter.blockTime;
                 memeEvent.idx = `${outerIndex}-${innerIndex ?? 0}`;
                 return memeEvent;
@@ -188,6 +189,7 @@ export class MeteoraDBCEventParser extends BaseEventParser {
       platformConfig: accounts[2],
       bondingCurve: accounts[0],
       pool: accounts[4],
+      poolDex: DEX_PROGRAMS.METEORA_DAMM.name
     } as MemeEvent
   }
 
@@ -201,6 +203,7 @@ export class MeteoraDBCEventParser extends BaseEventParser {
       platformConfig: accounts[2],
       bondingCurve: accounts[0],
       pool: accounts[4],
+      poolDex: DEX_PROGRAMS.METEORA_DAMM_V2.name
     } as MemeEvent
   }
 }

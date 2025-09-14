@@ -5,6 +5,7 @@ export interface MemeEvent {
   type: TradeType; // Type of the event (create/trade/migrate)
   timestamp: number; // Event timestamp
   idx: string; // Event index
+  slot: number; // Event slot
   signature: string; // Event signature
 
   // Common fields for all events
@@ -37,5 +38,9 @@ export interface MemeEvent {
   creator?: string; // Token creator address (PublicKey as string)
   bondingCurve?: string; // Bonding curve address (PublicKey as string)
   pool?: string; // Pool address (PublicKey as string)
+  poolDex?: string; // Pool Dex name
+  poolAReserve?: number;
+  poolBReserve?: number;
+  poolFeeRate?: number;
 }
 

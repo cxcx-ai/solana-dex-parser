@@ -25,7 +25,7 @@ export abstract class RaydiumLiquidityParserBase extends BaseLiquidityParser {
     const events: PoolEvent[] = [];
 
     this.classifiedInstructions.forEach(({ instruction, programId, outerIndex, innerIndex }) => {
-      const event = this.parseRaydiumInstruction(instruction, programId, outerIndex, innerIndex);
+      const event = this.ParseRaydiumInstruction(instruction, programId, outerIndex, innerIndex);
       if (event) {
         events.push(event);
       }
@@ -34,7 +34,7 @@ export abstract class RaydiumLiquidityParserBase extends BaseLiquidityParser {
     return events;
   }
 
-  protected parseRaydiumInstruction(
+  public ParseRaydiumInstruction(
     instruction: any,
     programId: string,
     outerIndex: number,

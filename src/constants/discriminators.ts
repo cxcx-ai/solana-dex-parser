@@ -67,11 +67,12 @@ export const DISCRIMINATORS = {
   },
   RAYDIUM_CL: {
     CREATE: {
+      createPool: new Uint8Array([233, 146, 209, 142, 207, 104, 64, 188]), // create pool
+    },
+    ADD_LIQUIDITY: {
       openPosition: new Uint8Array([135, 128, 47, 77, 15, 152, 240, 49]), // openPosition
       openPositionV2: new Uint8Array([77, 184, 74, 214, 112, 86, 241, 199]), // openPositionV2
       openPositionWithToken22Nft: new Uint8Array([77, 255, 174, 82, 125, 29, 201, 46]), // openPositionWithToken22Nft
-    },
-    ADD_LIQUIDITY: {
       increaseLiquidity: new Uint8Array([46, 156, 243, 118, 13, 205, 251, 178]), // increaseLiquidity
       increaseLiquidityV2: new Uint8Array([133, 29, 89, 223, 69, 238, 176, 10]), // increaseLiquidityV2
     },
@@ -121,13 +122,13 @@ export const DISCRIMINATORS = {
       ]), //RemoveLiquidity
     },
   },
-  METEORA_POOLS: {
+  METEORA_DAMM: {
     CREATE: new Uint8Array([7, 166, 138, 171, 206, 171, 236, 244]), // initializePermissionlessConstantProductPoolWithConfig
     ADD_LIQUIDITY: new Uint8Array([168, 227, 50, 62, 189, 171, 84, 176]), // addBalanceLiquidity
     REMOVE_LIQUIDITY: new Uint8Array([133, 109, 44, 179, 56, 238, 114, 33]), // removeBalanceLiquidity
     ADD_IMBALANCE_LIQUIDITY: new Uint8Array([79, 35, 122, 84, 173, 15, 93, 191]), //addImbalanceLiquidity
   },
-  METEORA_DAMM: {
+  METEORA_DAMM_V2: {
     INITIALIZE_POOL: new Uint8Array([95, 180, 10, 172, 84, 174, 232, 40]), // initialize_pool
     INITIALIZE_CUSTOM_POOL: new Uint8Array([20, 161, 241, 24, 189, 221, 180, 2]), // initialize_customizable_pool
     ADD_LIQUIDITY: new Uint8Array([181, 157, 89, 67, 143, 182, 52, 72]), // add_liquidity

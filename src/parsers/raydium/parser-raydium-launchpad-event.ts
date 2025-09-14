@@ -188,17 +188,18 @@ export class RaydiumLaunchpadEventParser {
     const [baseMint, quoteMint, poolMint, lpMint] = discriminator.equals(DISCRIMINATORS.RAYDIUM_LCP.MIGRATE_TO_AMM)
       ? [accounts[1], accounts[2], accounts[13], accounts[16]]
       : [accounts[1], accounts[2], accounts[5], accounts[7]];
-    // const amm = discriminator.equals(DISCRIMINATORS.RAYDIUM_LCP.MIGRATE_TO_AMM)
-    //   ? DEX_PROGRAMS.RAYDIUM_V4.name
-    //   : DEX_PROGRAMS.RAYDIUM_CPMM.name;
+    const amm = discriminator.equals(DISCRIMINATORS.RAYDIUM_LCP.MIGRATE_TO_AMM)
+      ? DEX_PROGRAMS.RAYDIUM_V4.name
+      : DEX_PROGRAMS.RAYDIUM_CPMM.name;
 
     return {
       protocol: DEX_PROGRAMS.RAYDIUM_LCP.name,
-      type: 'COMPLETE',
+      type: 'MIGRATE',
       timestamp: this.adapter.blockTime,
       baseMint: baseMint,
       quoteMint: quoteMint,
       pool: poolMint,
+      poolDex: amm
     } as MemeEvent
   }
 }

@@ -5,12 +5,12 @@ import { MeteoraLiquidityParserBase } from './parser-meteora-liquidity-base';
 export class MeteoraDAMMPoolParser extends MeteoraLiquidityParserBase {
   public getPoolAction(data: Buffer): PoolEventType | null {
     const instructionType = data.slice(0, 8);
-    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.INITIALIZE_POOL)) return 'CREATE';
-    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.INITIALIZE_CUSTOM_POOL)) return 'CREATE';
-    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.ADD_LIQUIDITY)) return 'ADD';
-    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.CLAIM_POSITION_FEE)) return 'REMOVE';
-    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.REMOVE_LIQUIDITY)) return 'REMOVE';
-    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.REMOVE_ALL_LIQUIDITY)) return 'REMOVE';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM_V2.INITIALIZE_POOL)) return 'CREATE';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM_V2.INITIALIZE_CUSTOM_POOL)) return 'CREATE';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM_V2.ADD_LIQUIDITY)) return 'ADD';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM_V2.CLAIM_POSITION_FEE)) return 'REMOVE';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM_V2.REMOVE_LIQUIDITY)) return 'REMOVE';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM_V2.REMOVE_ALL_LIQUIDITY)) return 'REMOVE';
     return null;
   }
 
@@ -21,7 +21,7 @@ export class MeteoraDAMMPoolParser extends MeteoraLiquidityParserBase {
     transfers: TransferData[]
   ): PoolEvent {
     const discriminator = data.slice(0, 8);
-    const eventInstruction = this.getInstructionByDiscriminator(DISCRIMINATORS.METEORA_DAMM.CREATE_POSITION_EVENT, 16);
+    const eventInstruction = this.getInstructionByDiscriminator(DISCRIMINATORS.METEORA_DAMM_V2.CREATE_POSITION_EVENT, 16);
     if (!eventInstruction) throw new Error('Event instruction not found');
     const eventTransfers = this.getTransfersForInstruction(
       eventInstruction.programId,
@@ -34,17 +34,17 @@ export class MeteoraDAMMPoolParser extends MeteoraLiquidityParserBase {
     const accounts = this.adapter.getInstructionAccounts(instruction);
     const token0Mint =
       token0?.info.mint ||
-      (discriminator.equals(DISCRIMINATORS.METEORA_DAMM.INITIALIZE_CUSTOM_POOL) ? accounts[7] : accounts[8]);
+      (discriminator.equals(DISCRIMINATORS.METEORA_DAMM_V2.INITIALIZE_CUSTOM_POOL) ? accounts[7] : accounts[8]);
     const token1Mint =
       token1?.info.mint ||
-      (discriminator.equals(DISCRIMINATORS.METEORA_DAMM.INITIALIZE_CUSTOM_POOL) ? accounts[8] : accounts[9]);
+      (discriminator.equals(DISCRIMINATORS.METEORA_DAMM_V2.INITIALIZE_CUSTOM_POOL) ? accounts[8] : accounts[9]);
 
     const programId = this.adapter.getInstructionProgramId(instruction);
     const [token0Decimals, token1Decimals] = [
       this.adapter.getTokenDecimals(token0Mint),
       this.adapter.getTokenDecimals(token1Mint),
     ];
-    const poolId = discriminator.equals(DISCRIMINATORS.METEORA_DAMM.INITIALIZE_CUSTOM_POOL) ? accounts[5] : accounts[6];
+    const poolId = discriminator.equals(DISCRIMINATORS.METEORA_DAMM_V2.INITIALIZE_CUSTOM_POOL) ? accounts[5] : accounts[6];
     return {
       ...this.adapter.getPoolEventBase('CREATE', programId),
       idx: index.toString(),

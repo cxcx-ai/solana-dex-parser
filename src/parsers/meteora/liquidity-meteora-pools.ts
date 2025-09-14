@@ -5,14 +5,14 @@ import { MeteoraLiquidityParserBase } from './parser-meteora-liquidity-base';
 export class MeteoraPoolsParser extends MeteoraLiquidityParserBase {
   public getPoolAction(data: Buffer): PoolEventType | null {
     const instructionType = data.slice(0, 8);
-    if (instructionType.equals(DISCRIMINATORS.METEORA_POOLS.CREATE)) return 'CREATE';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.CREATE)) return 'CREATE';
     if (
-      [DISCRIMINATORS.METEORA_POOLS.ADD_LIQUIDITY, DISCRIMINATORS.METEORA_POOLS.ADD_IMBALANCE_LIQUIDITY].some((it) =>
+      [DISCRIMINATORS.METEORA_DAMM.ADD_LIQUIDITY, DISCRIMINATORS.METEORA_DAMM.ADD_IMBALANCE_LIQUIDITY].some((it) =>
         instructionType.equals(it)
       )
     )
       return 'ADD';
-    if (instructionType.equals(DISCRIMINATORS.METEORA_POOLS.REMOVE_LIQUIDITY)) return 'REMOVE';
+    if (instructionType.equals(DISCRIMINATORS.METEORA_DAMM.REMOVE_LIQUIDITY)) return 'REMOVE';
     return null;
   }
 

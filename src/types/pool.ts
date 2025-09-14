@@ -19,6 +19,11 @@ export interface PoolEvent extends PoolEventBase {
   poolId: string;
 
   /**
+   * Pool config address (platform config)
+   */
+  config?: string;
+
+  /**
    * LP mint address
    */
   poolLpMint?: string;

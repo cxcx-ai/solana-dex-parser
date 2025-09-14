@@ -129,12 +129,12 @@ export const DEX_PROGRAMS = {
     name: 'MeteoraDLMM',
     tags: ['amm'],
   },
-  METEORA_POOLS: {
+  METEORA_DAMM: {
     id: 'Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB',
-    name: 'MeteoraPools',
+    name: 'MeteoraDamm',
     tags: ['amm'],
   },
-  METEORA_DAMM: {
+  METEORA_DAMM_V2: {
     id: 'cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG',
     name: 'MeteoraDammV2',
     tags: ['amm'],
