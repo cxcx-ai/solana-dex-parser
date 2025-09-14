@@ -19,6 +19,10 @@ export class MeteoraParser extends BaseParser {
             amm: this.dexInfo.amm || getProgramName(programId),
           });
           if (trade) {
+            const pool = this.getPoolAddress(instruction, programId);
+            if (pool) {
+              trade.Pool = [pool];
+            }
             trades.push(this.utils.attachTokenTransferInfo(trade, this.transferActions));
           }
         }
@@ -26,6 +30,22 @@ export class MeteoraParser extends BaseParser {
     });
 
     return trades;
+  }
+
+  private getPoolAddress(instruction: any, programId: string): string | null {
+    const accounts = this.adapter.getInstructionAccounts(instruction);
+    if (accounts.length > 5) {
+      switch (programId) {
+        case DEX_PROGRAMS.METEORA_DAMM.id:
+        case DEX_PROGRAMS.METEORA.id:
+          return accounts[0];
+        case DEX_PROGRAMS.METEORA_DAMM_V2.id:
+          return accounts[1];
+        default:
+          return null
+      }
+    }
+    return null;
   }
 
   private notLiquidityEvent(instruction: any): boolean {
