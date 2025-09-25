@@ -153,23 +153,23 @@ export const findAssociatedTokenAddress = (
   walletAddress: PublicKey,
   tokenMintAddress: PublicKey,
 ): { standard: PublicKey; token2022: PublicKey } => {
-  const standardATA = PublicKey.findProgramAddressSync(
+  const [standardATA] = PublicKey.findProgramAddressSync(
     [
       walletAddress.toBuffer(),
       new PublicKey(TOKEN_PROGRAM_ID).toBuffer(),
       tokenMintAddress.toBuffer(),
     ],
     ASSOCIATED_TOKEN_PROGRAM_ID,
-  )[0];
+  );
 
-  const token2022ATA = PublicKey.findProgramAddressSync(
+  const [token2022ATA] = PublicKey.findProgramAddressSync(
     [
       walletAddress.toBuffer(),
       new PublicKey(TOKEN_2022_PROGRAM_ID).toBuffer(),
       tokenMintAddress.toBuffer(),
     ],
     ASSOCIATED_TOKEN_PROGRAM_ID,
-  )[0];
+  );
 
   return {
     standard: standardATA,

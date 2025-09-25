@@ -131,6 +131,7 @@ export const DISCRIMINATORS = {
   METEORA_DAMM_V2: {
     INITIALIZE_POOL: new Uint8Array([95, 180, 10, 172, 84, 174, 232, 40]), // initialize_pool
     INITIALIZE_CUSTOM_POOL: new Uint8Array([20, 161, 241, 24, 189, 221, 180, 2]), // initialize_customizable_pool
+    INITIALIZE_POOL_WITH_DYNAMIC_CONFIG: new Uint8Array([149, 82, 72, 197, 253, 252, 68, 15]), // initialize_pool_with_dynamic_config
     ADD_LIQUIDITY: new Uint8Array([181, 157, 89, 67, 143, 182, 52, 72]), // add_liquidity
     CLAIM_POSITION_FEE: new Uint8Array([180, 38, 154, 17, 133, 33, 162, 211]), // claim_position_fee
     REMOVE_LIQUIDITY: new Uint8Array([80, 85, 209, 72, 24, 206, 177, 108]), //remove_liquidity

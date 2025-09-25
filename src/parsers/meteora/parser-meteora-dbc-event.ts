@@ -75,6 +75,7 @@ export class MeteoraDBCEventParser extends BaseEventParser {
                   programId,
                   outerIndex,
                   innerIndex,
+                  signer: this.adapter.signer,
                 };
                 const memeEvent: MemeEvent = parser.decode(data.slice(parser.slice), options);
                 if (!memeEvent) return null;
@@ -111,7 +112,7 @@ export class MeteoraDBCEventParser extends BaseEventParser {
     const outputTokenAccount = accounts[4];
 
     var inputMint, outputMint;
-    var tradeType = GetAccountTradeType(new PublicKey(userAccount), new PublicKey(baseMint), new PublicKey(inputTokenAccount), new PublicKey(outputTokenAccount))
+    var tradeType = GetAccountTradeType(new PublicKey(options.signer), new PublicKey(baseMint), new PublicKey(inputTokenAccount), new PublicKey(outputTokenAccount))
     if (tradeType == 'SELL') {
       inputMint = baseMint;
       outputMint = quoteMint;

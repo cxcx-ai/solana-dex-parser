@@ -88,7 +88,7 @@ export class MoonitEventParser extends BaseEventParser {
               }
             }
           } catch (error) {
-            console.error('Failed to parse Meteora DBC event:', error);
+            console.error('Failed to parse Moonit event:', error);
             throw error;
           }
           return null;
