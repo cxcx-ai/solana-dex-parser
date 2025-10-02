@@ -223,9 +223,9 @@ export class TransactionUtils {
   isIgnoredProgram(programId: string): boolean {
     return SKIP_PROGRAM_IDS.includes(programId) ||
       Object.values(DEX_PROGRAMS)
-      .filter((it) => it.tags.includes('vault'))
-      .map((it) => it.id)
-      .includes(programId);
+        .filter((it) => it.tags.includes('vault'))
+        .map((it) => it.id)
+        .includes(programId);
   }
 
   /**
@@ -347,7 +347,9 @@ export class TransactionUtils {
     let inputToken = uniqueTokens[0];
     let outputToken = uniqueTokens[uniqueTokens.length - 1];
 
-    if (outputToken.source == signer || outputToken.authority == signer) {
+    if ((outputToken.source == signer || outputToken.authority == signer)
+      || (outputToken.source == DEX_PROGRAMS.OKX_ROUTER.id || outputToken.authority == DEX_PROGRAMS.OKX_ROUTER.id) // OKX router case
+    ) {
       [inputToken, outputToken] = [outputToken, inputToken];
     }
 
@@ -392,6 +394,7 @@ export class TransactionUtils {
         feeTransfer = transfer;
         return; // skip fee transfer
       }
+      if (tokenInfo.authority == DEX_PROGRAMS.OKX_ROUTER.id && destination == this.adapter.signer) return; // skip signer for OKX router case
 
       const key = `${tokenInfo.amount}-${tokenInfo.mint}`;
       if (seenTransfers.has(key)) return;
@@ -603,7 +606,7 @@ export class TransactionUtils {
       cInst.outerIndex,
       cInst.innerIndex
     );
-    
+
     if (transfers.length < 2) {
       return event;
     }

@@ -57,6 +57,11 @@ export const DEX_PROGRAMS = {
     name: 'OKX',
     tags: ['route'],
   },
+  OKX_ROUTER: {
+    id: 'HV1KXxWFaSeriyFvXyx48FqG9BoFbfinB8njCJonqP7K',
+    name: 'OKXRouter',
+    tags: ['route'],
+  },
   RAYDIUM_ROUTE: {
     id: 'routeUGWgWzqBWFcrCfv8tritsqukccJPu3q5GPP3xS',
     name: 'RaydiumRoute',

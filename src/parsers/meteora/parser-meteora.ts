@@ -12,8 +12,11 @@ export class MeteoraParser extends BaseParser {
         [DEX_PROGRAMS.METEORA.id, DEX_PROGRAMS.METEORA_DAMM.id, DEX_PROGRAMS.METEORA_DAMM_V2.id].includes(programId) &&
         this.notLiquidityEvent(instruction)
       ) {
-        const transfers = this.getTransfersForInstruction(programId, outerIndex, innerIndex);
+        let transfers = this.getTransfersForInstruction(programId, outerIndex, innerIndex);
         if (transfers.length >= 2) {
+          if (programId == DEX_PROGRAMS.METEORA.id) {
+            transfers = transfers.slice(0, 2);
+          }
           const trade = this.utils.processSwapData(transfers, {
             ...this.dexInfo,
             amm: this.dexInfo.amm || getProgramName(programId),

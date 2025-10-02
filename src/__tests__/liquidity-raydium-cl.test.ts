@@ -8,7 +8,7 @@ const tests = {
   CREATE: [
     {
       signature: '5BEKeMuUfah3wFkCvMmaGDq5JDTat2nokaqMURYZubNDm9WdQrMmwWK4YcL7nksuq94k62wxgbbbwUf5LCgtXU4J',
-      type: 'CREATE',
+      type: 'ADD',
       desc: 'Raydium Concentrated Liquidity: openPositionWithToken22Nft',
       name: 'PAIN',
       poolId: 'DFX9AHEnoU8caagtFFGiv7xnsEJ3DTh5TQo8XktJHoTN',
@@ -30,7 +30,7 @@ const tests = {
     },
     {
       signature: '54t2sbzBxmejGNYmttn5nr4fDeRHdZC6CF4eiAm3Was7WKrvw6LEH51gb2RGw5Wom2y12vW11o2hwaHBE3W4Rgx9',
-      type: 'CREATE',
+      type: 'ADD',
       desc: 'Raydium Concentrated Liquidity: openPosition',
       name: 'EDAS',
       poolId: '5MczDZ1DYBpCyjXWhyLXAW4AofywKizDF8w4cLZqvpuV',
@@ -41,7 +41,7 @@ const tests = {
     },
     {
       signature: '2Bm6Xh3UQYCYywCQPEJ1tCQKrSPHRPGukN4qTmutCYnR45PKMBhTuBjMdbT7x3fsLnqvduAeiTQeVRQ76NA2NMGN',
-      type: 'CREATE',
+      type: 'ADD',
       desc: 'Raydium Concentrated Liquidity: openPosition',
       name: 'USDC',
       poolId: '8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj',

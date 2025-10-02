@@ -434,7 +434,7 @@ export const tests = [
     },
     user: 'D946cRZP4KiwXvfcxYhoC11boWyA5np5Y8AFhEQ2AftE',
     programId: 'Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB',
-    amm: 'MeteoraPools',
+    amm: 'MeteoraDamm',
     route: '',
     slot: 282652735,
     timestamp: 1723260900,
